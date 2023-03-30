@@ -8,15 +8,17 @@
 	special_colorize = TRUE
 	relevent_layers = list(BODY_BEHIND_LAYER, BODY_FRONT_LAYER)
 	genetic = TRUE
-	/// A generalisation of the tail-type, e.g. lizard or feline, for hardsuit or other sprites
+	/// A generalisation of the tail-type, e.g. lizard or feline, for MODsuit or other sprites
 	var/general_type
 
 /datum/sprite_accessory/tails/get_special_render_state(mob/living/carbon/human/H)
-	// Hardsuit tail spriting
-	if(general_type && H.wear_suit && istype(H.wear_suit, /obj/item/clothing/suit/space/hardsuit))
-		var/obj/item/clothing/suit/space/hardsuit/HS = H.wear_suit
-		if(HS.hardsuit_tail_colors)
-			return "[general_type]_hardsuit"
+	// MODsuit tail spriting
+	if(general_type && H.wear_suit && istype(H.wear_suit, /obj/item/clothing/suit/mod))
+		var/obj/item/clothing/suit/mod/modsuit_chest = H.wear_suit
+		var/obj/item/mod/control/modsuit_control = modsuit_chest.mod
+		var/datum/mod_theme/mod_theme = modsuit_control.theme
+		if(mod_theme.modsuit_tail_colors)
+			return "[general_type]_modsuit"
 
 	var/obj/item/organ/tail/T = H.getorganslot(ORGAN_SLOT_TAIL)
 	if(T && T.wagging)
@@ -26,21 +28,25 @@
 
 /datum/sprite_accessory/tails/get_special_icon(mob/living/carbon/human/H, passed_state)
 	var/returned = icon
-	if(passed_state == "[general_type]_hardsuit") //Guarantees we're wearing a hardsuit, skip checks
-		var/obj/item/clothing/suit/space/hardsuit/HS = H.wear_suit
-		if(HS.hardsuit_tail_colors)
-			returned = 'modular_skyrat/master_files/icons/mob/sprite_accessory/tails_hardsuit.dmi'
+	if(passed_state == "[general_type]_modsuit") //Guarantees we're wearing a MODsuit, skip checks
+		var/obj/item/clothing/suit/mod/modsuit_chest = H.wear_suit
+		var/obj/item/mod/control/modsuit_control = modsuit_chest.mod
+		var/datum/mod_theme/mod_theme = modsuit_control.theme
+		if(mod_theme.modsuit_tail_colors)
+			returned = 'modular_skyrat/master_files/icons/mob/sprite_accessory/tails_modsuit.dmi'
 	return returned
 
 /datum/sprite_accessory/tails/get_special_render_colour(mob/living/carbon/human/H, passed_state)
-	if(passed_state == "[general_type]_hardsuit") //Guarantees we're wearing a hardsuit, skip checks
-		var/obj/item/clothing/suit/space/hardsuit/HS = H.wear_suit
-		if(HS.hardsuit_tail_colors)
+	if(passed_state == "[general_type]_modsuit") //Guarantees we're wearing a MODsuit, skip checks
+		var/obj/item/clothing/suit/mod/modsuit_chest = H.wear_suit
+		var/obj/item/mod/control/modsuit_control = modsuit_chest.mod
+		var/datum/mod_theme/mod_theme = modsuit_control.theme
+		if(mod_theme.modsuit_tail_colors)
 			//Currently this way, when I have more time I'll write a hex -> matrix converter to pre-bake them instead
 			var/list/finished_list = list()
-			finished_list += ReadRGB("[HS.hardsuit_tail_colors[1]]0")
-			finished_list += ReadRGB("[HS.hardsuit_tail_colors[2]]0")
-			finished_list += ReadRGB("[HS.hardsuit_tail_colors[3]]0")
+			finished_list += ReadRGB("[mod_theme.modsuit_tail_colors[1]]00")
+			finished_list += ReadRGB("[mod_theme.modsuit_tail_colors[2]]00")
+			finished_list += ReadRGB("[mod_theme.modsuit_tail_colors[3]]00")
 			finished_list += list(0,0,0,255)
 			for(var/index in 1 to finished_list.len)
 				finished_list[index] /= 255
@@ -53,14 +59,14 @@
 	general_type = SPECIES_LIZARD
 
 /datum/sprite_accessory/tails/human
-	recommended_species = list(SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_FELINE, SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL)
+	recommended_species = list(SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_FELINE, SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_GHOUL)
 	organ_type = /obj/item/organ/tail/cat
 
 /datum/sprite_accessory/tails/monkey/default
 	name = "Monkey"
 	icon_state = "monkey"
 	icon = 'icons/mob/mutant_bodyparts.dmi'
-	recommended_species = list(SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_FELINE, SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_MONKEY)
+	recommended_species = list(SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_FELINE, SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_MONKEY, SPECIES_GHOUL)
 	color_src = FALSE
 	organ_type = /obj/item/organ/tail/monkey
 
@@ -69,9 +75,11 @@
 		if(H.try_hide_mutant_parts)
 			return TRUE
 		if(H.wear_suit.flags_inv & HIDEJUMPSUIT)
-			if(istype(H.wear_suit, /obj/item/clothing/suit/space/hardsuit))
-				var/obj/item/clothing/suit/space/hardsuit/HS = H.wear_suit
-				if(HS.hardsuit_tail_colors)
+			if(istype(H.wear_suit, /obj/item/clothing/suit/mod))
+				var/obj/item/clothing/suit/mod/modsuit_chest = H.wear_suit
+				var/obj/item/mod/control/modsuit_control = modsuit_chest.mod
+				var/datum/mod_theme/mod_theme = modsuit_control.theme
+				if(mod_theme.modsuit_tail_colors)
 					return FALSE
 			return TRUE
 	if(H.owned_turf)  //we do a lil' emoting
@@ -83,13 +91,13 @@
 /datum/sprite_accessory/tails/none
 	name = "None"
 	icon_state = "none"
-	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_HUMANOID)
+	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_HUMANOID, SPECIES_GHOUL)
 	color_src = null
 	factual = FALSE
 
 /datum/sprite_accessory/tails/mammal
 	icon_state = "none"
-	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL,SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_HUMANOID)
+	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL,SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_HUMANOID, SPECIES_GHOUL)
 	icon = 'modular_skyrat/master_files/icons/mob/sprite_accessory/tails.dmi'
 	organ_type = /obj/item/organ/tail/fluffy/no_wag
 	color_src = USE_MATRIXED_COLORS
@@ -98,15 +106,15 @@
 	organ_type = /obj/item/organ/tail/fluffy
 
 /datum/sprite_accessory/tails/mammal/wagging/vulpkanin
-	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_VULP, SPECIES_HUMANOID)
+	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_VULP, SPECIES_HUMANOID, SPECIES_GHOUL)
 	general_type = "vulpine"
 
 /datum/sprite_accessory/tails/mammal/wagging/tajaran
-	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_TAJARAN, SPECIES_HUMANOID)
+	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_TAJARAN, SPECIES_HUMANOID, SPECIES_GHOUL)
 	general_type = "feline"
 
 /datum/sprite_accessory/tails/mammal/wagging/akula
-	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_AKULA, SPECIES_AQUATIC, SPECIES_HUMANOID)
+	recommended_species = list(SPECIES_SYNTHMAMMAL, SPECIES_MAMMAL, SPECIES_HUMAN, SPECIES_SYNTHHUMAN, SPECIES_AKULA, SPECIES_AQUATIC, SPECIES_HUMANOID, SPECIES_GHOUL)
 	general_type = "marine"
 
 /datum/sprite_accessory/tails/mammal/wagging/avian1
@@ -122,7 +130,7 @@
 /datum/sprite_accessory/tails/mammal/wagging/axolotl
 	name = "Axolotl"
 	icon_state = "axolotl"
-	general_type = SPECIES_LIZARD
+	general_type = "axolotl"
 
 /datum/sprite_accessory/tails/mammal/wagging/batl
 	name = "Bat (Long)"
@@ -166,6 +174,11 @@
 	icon_state = "dtiger"
 	color_src = USE_ONE_COLOR
 	default_color = DEFAULT_PRIMARY*/
+
+/datum/sprite_accessory/tails/mammal/deer
+	name = "Deer"
+	icon_state = "deer"
+	general_type = "deer"
 
 /datum/sprite_accessory/tails/mammal/wagging/eevee
 	name = "Eevee"
@@ -226,7 +239,7 @@
 /datum/sprite_accessory/tails/mammal/wagging/kitsune
 	name = "Kitsune"
 	icon_state = "kitsune"
-	general_type = "vulpine" // vulpine until I can be bothered to make kitsune hardsuit tailsprite!
+	general_type = "vulpine" // vulpine until I can be bothered to make kitsune modsuit tailsprite!
 
 /datum/sprite_accessory/tails/mammal/wagging/lab
 	name = "Lab"
@@ -346,3 +359,57 @@
 /datum/sprite_accessory/tails/mammal/wagging/spade
 	name = "Succubus Spade Tail"
 	icon_state = "spade"
+
+/datum/sprite_accessory/tails/mammal/wagging/plugtail
+	name = "plugtail"
+	icon_state = "plugtail"
+
+/datum/sprite_accessory/tails/mammal/wagging/zorgoia
+	name = "Zorgoia tail"
+	icon_state = "zorgoia"
+
+/datum/sprite_accessory/tails/mammal/wagging/tailmawwag
+	name = "Tailmaw (wag)"
+	icon_state = "tailmawwag"
+	color_src = USE_ONE_COLOR
+
+/datum/sprite_accessory/tails/mammal/wagging/tailmaw
+	name = "Tailmaw"
+	icon_state = "tailmaw"
+	color_src = USE_ONE_COLOR
+
+/datum/sprite_accessory/tails/mammal/wagging/snake
+	name = "Snake"
+	icon_state = "snaketail"
+	color_src = USE_ONE_COLOR
+
+/datum/sprite_accessory/tails/mammal/teshari
+	recommended_species = list(SPECIES_TESHARI)
+	general_type = "teshari"
+
+/datum/sprite_accessory/tails/mammal/teshari/default
+	name = "Teshari Default Tail"
+	icon_state = "teshari_default"
+
+/datum/sprite_accessory/tails/mammal/teshari/fluffy
+	name = "Teshari Fluffy Tail"
+	icon_state = "teshari_fluffy"
+/datum/sprite_accessory/tails/mammal/teshari/thin
+	name = "Teshari Thin Tail"
+	icon_state = "teshari_thin"
+
+/datum/sprite_accessory/tails/mammal/wagging/snakestripe
+	name = "Snake stripe"
+	icon_state = "snakestripe"
+
+/datum/sprite_accessory/tails/mammal/wagging/snakedual
+	name = "Snake dual"
+	icon_state = "snakedual"
+
+/datum/sprite_accessory/tails/mammal/wagging/datashark
+	name = "Data shark"
+	icon_state = "datashark"
+
+/datum/sprite_accessory/tails/mammal/wagging/snakestripealt
+	name = "Snake stripe (alt)"
+	icon_state = "snakestripealt"

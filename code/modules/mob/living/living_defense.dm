@@ -52,15 +52,13 @@
 	return BULLET_ACT_HIT
 
 /mob/living/bullet_act(obj/projectile/P, def_zone, piercing_hit = FALSE)
+	. = ..()
 	var/armor = run_armor_check(def_zone, P.flag, "","",P.armour_penetration, "", FALSE, P.weak_against_armour)
 	var/on_hit_state = P.on_hit(src, armor, piercing_hit)
 	if(!P.nodamage && on_hit_state != BULLET_ACT_BLOCK)
-		apply_damage(P.damage, P.damage_type, def_zone, armor, wound_bonus=P.wound_bonus, bare_wound_bonus=P.bare_wound_bonus, sharpness = P.sharpness)
-		//SKYRAT EDIT ADDITION BEGIN
-		if(P.damage_type == BRUTE || P.damage_type == BURN)
-			apply_damage((P.damage*PROJECTILE_TISSUE_DAMAGE_STAMINA_MULTIPLIER), STAMINA, def_zone, armor)
-		//SKYRAT EDIT ADDITION END
-		apply_effects(P.stun, P.knockdown, P.unconscious, P.irradiate, P.slur, P.stutter, P.eyeblur, P.drowsy, armor, P.stamina, P.jitter, P.paralyze, P.immobilize)
+		var/attack_direction = get_dir(P.starting, src)
+		apply_damage(P.damage, P.damage_type, def_zone, armor, wound_bonus=P.wound_bonus, bare_wound_bonus=P.bare_wound_bonus, sharpness = P.sharpness, attack_direction = attack_direction)
+		apply_effects(P.stun, P.knockdown, P.unconscious, P.slur, P.stutter, P.eyeblur, P.drowsy, armor, P.stamina, P.jitter, P.paralyze, P.immobilize)
 		if(P.dismemberment)
 			check_projectile_dismemberment(P, def_zone)
 	return on_hit_state ? BULLET_ACT_HIT : BULLET_ACT_BLOCK
@@ -81,6 +79,7 @@
 		return
 	. = combat_mode
 	combat_mode = new_mode
+	SEND_SIGNAL(src, COMSIG_LIVING_COMBAT_MODE_TOGGLE, new_mode) //SKYRAT EDIT ADDITION
 	if(hud_used?.action_intent)
 		hud_used.action_intent.update_appearance()
 	//SKYRAT EDIT ADDITION BEGIN
@@ -91,11 +90,12 @@
 				G.toggle_safety(src, "off")
 			else
 				G.toggle_safety(src, "on")
-	if(!ishuman(src))
+	if(!ishuman(src) && !ckey)
 		if(combat_mode)
 			set_combat_indicator(TRUE)
 		else
 			set_combat_indicator(FALSE)
+	face_mouse = (client?.prefs?.read_preference(/datum/preference/toggle/face_cursor_combat_mode) && combat_mode) ? TRUE : FALSE
 	//SKYRAT EDIT ADDITION END
 
 	if(silent || !(client?.prefs.toggles & SOUND_COMBATMODE))
@@ -239,6 +239,26 @@
 		to_chat(M, span_danger("You glomp [src]!"))
 		return TRUE
 
+/mob/living/attack_basic_mob(mob/living/basic/user, list/modifiers)
+	if(user.melee_damage_upper == 0)
+		if(user != src)
+			visible_message(span_notice("\The [user] [user.friendly_verb_continuous] [src]!"), \
+							span_notice("\The [user] [user.friendly_verb_continuous] you!"), null, COMBAT_MESSAGE_RANGE, user)
+			to_chat(user, span_notice("You [user.friendly_verb_simple] [src]!"))
+		return FALSE
+	if(HAS_TRAIT(user, TRAIT_PACIFISM))
+		to_chat(user, span_warning("You don't want to hurt anyone!"))
+		return FALSE
+
+	if(user.attack_sound)
+		playsound(loc, user.attack_sound, 50, TRUE, TRUE)
+	user.do_attack_animation(src)
+	visible_message(span_danger("\The [user] [user.attack_verb_continuous] [src]!"), \
+					span_userdanger("\The [user] [user.attack_verb_continuous] you!"), null, COMBAT_MESSAGE_RANGE, user)
+	to_chat(user, span_danger("You [user.attack_verb_simple] [src]!"))
+	log_combat(user, src, "attacked")
+	return TRUE
+
 /mob/living/attack_animal(mob/living/simple_animal/user, list/modifiers)
 	. = ..()
 	user.face_atom(src)
@@ -330,7 +350,7 @@
 	return FALSE
 
 /mob/living/attack_alien(mob/living/carbon/alien/humanoid/user, list/modifiers)
-	SEND_SIGNAL(src, COMSIG_MOB_ATTACK_ALIEN, user)
+	SEND_SIGNAL(src, COMSIG_MOB_ATTACK_ALIEN, user, modifiers)
 	if(LAZYACCESS(modifiers, RIGHT_CLICK))
 		user.do_attack_animation(src, ATTACK_EFFECT_DISARM)
 		return TRUE
@@ -357,8 +377,6 @@
 	if(origin && istype(origin, /datum/spacevine_mutation) && isvineimmune(src))
 		return FALSE
 	return ..()
-
-//Looking for irradiate()? It's been moved to radiation.dm under the rad_act() for mobs.
 
 /mob/living/acid_act(acidpwr, acid_volume)
 	take_bodypart_damage(acidpwr * min(1, acid_volume * 0.1))
@@ -438,7 +456,7 @@
 	// this forces any kind of flash (namely normal and static) to use a black screen for photosensitive players
 	// it absolutely isn't an ideal solution since sudden flashes to black can apparently still trigger epilepsy, but byond apparently doesn't let you freeze screens
 	// and this is apparently at least less likely to trigger issues than a full white/static flash
-	if(client?.prefs?.darkened_flash)
+	if(client?.prefs?.read_preference(/datum/preference/toggle/darkened_flash))
 		type = /atom/movable/screen/fullscreen/flash/black
 
 	overlay_fullscreen("flash", type)

@@ -3,6 +3,7 @@
 	name = "chemical press"
 	desc = "A press that makes pills, patches and bottles."
 	icon_state = "pill_press"
+	buffer = 60 //SKYRAT EDIT HYPOVIALS. This is needed so it can completely fill the vials up.
 
 	///maximum size of a pill
 	var/max_pill_volume = 50
@@ -10,6 +11,8 @@
 	var/max_patch_volume = 40
 	///maximum size of a bottle
 	var/max_bottle_volume = 30
+	//SKYRAT EDIT HYPOVIALS maximum size of a vial
+	var/max_vial_volume = 60
 	///current operating product (pills or patches)
 	var/product = "pill"
 	///the minimum size a pill or patch can be
@@ -24,6 +27,10 @@
 	var/pill_number = RANDOM_PILL_STYLE
 	///list of id's and icons for the pill selection of the ui
 	var/list/pill_styles
+	/// Currently selected patch style
+	var/patch_style = DEFAULT_PATCH_STYLE
+	/// List of available patch styles for UI
+	var/list/patch_styles
 	///list of products stored in the machine, so we dont have 610 pills on one tile
 	var/list/stored_products = list()
 	///max amount of pills allowed on our tile before we start storing them instead
@@ -46,6 +53,14 @@
 		SL["id"] = x
 		SL["class_name"] = assets.icon_class_name("pill[x]")
 		pill_styles += list(SL)
+	var/datum/asset/spritesheet/simple/patches_assets = get_asset_datum(/datum/asset/spritesheet/simple/patches)
+	patch_styles = list()
+	for (var/raw_patch_style in PATCH_STYLE_LIST)
+		//adding class_name for use in UI
+		var/list/patch_style = list()
+		patch_style["style"] = raw_patch_style
+		patch_style["class_name"] = patches_assets.icon_class_name(raw_patch_style)
+		patch_styles += list(patch_style)
 
 /obj/machinery/plumbing/pill_press/process()
 	if(machine_stat & NOPOWER)
@@ -66,12 +81,20 @@
 			var/obj/item/reagent_containers/pill/patch/P = new(src)
 			reagents.trans_to(P, current_volume)
 			P.name = trim("[product_name] patch")
+			P.icon_state = patch_style
 			stored_products += P
 		else if (product == "bottle")
 			var/obj/item/reagent_containers/glass/bottle/P = new(src)
 			reagents.trans_to(P, current_volume)
 			P.name = trim("[product_name] bottle")
 			stored_products += P
+		//SKYRAT EDIT HYPOVIALS
+		else if (product == "vial")
+			var/obj/item/reagent_containers/glass/vial/small/P = new(src)
+			reagents.trans_to(P, current_volume)
+			P.name = trim("[product_name] vial")
+			stored_products += P
+		//SKYRAT EDIT HYPOVIALS END
 	if(stored_products.len)
 		var/pill_amount = 0
 		for(var/thing in loc)
@@ -89,6 +112,7 @@
 /obj/machinery/plumbing/pill_press/ui_assets(mob/user)
 	return list(
 		get_asset_datum(/datum/asset/spritesheet/simple/pills),
+		get_asset_datum(/datum/asset/spritesheet/simple/patches),
 	)
 
 /obj/machinery/plumbing/pill_press/ui_interact(mob/user, datum/tgui/ui)
@@ -106,6 +130,8 @@
 	data["product"] = product
 	data["min_volume"] = min_volume
 	data["max_volume"] = max_volume
+	data["patch_style"] = patch_style
+	data["patch_styles"] = patch_styles
 	return data
 
 /obj/machinery/plumbing/pill_press/ui_act(action, params)
@@ -128,4 +154,10 @@
 				max_volume = max_patch_volume
 			else if (product == "bottle")
 				max_volume = max_bottle_volume
+			//SKYRAT EDIT HYPOVIALS
+			else if (product == "vial")
+				max_volume = max_vial_volume
+			//SKYRAT EDIT HPYOVIALS END
 			current_volume = clamp(current_volume, min_volume, max_volume)
+		if("change_patch_style")
+			patch_style = params["patch_style"]

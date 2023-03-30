@@ -230,6 +230,12 @@ const PackagingControls = (props, context) => {
     bottleAmount,
     setBottleAmount,
   ] = useSharedState(context, 'bottleAmount', 1);
+  // SKYRAT EDIT HYPOVIALS
+  const [
+    vialAmount,
+    setVialAmount,
+  ] = useSharedState(context, 'vialAmount', 1);
+  // SKYRAT EDIT END
   const [
     packAmount,
     setPackAmount,
@@ -241,6 +247,8 @@ const PackagingControls = (props, context) => {
     autoCondiStyle,
     pillStyles = [],
     condiStyles = [],
+    patch_style,
+    patch_styles = [],
   } = data;
   const autoCondiStyleChosen = autoCondiStyle === chosenCondiStyle;
   return (
@@ -274,6 +282,20 @@ const PackagingControls = (props, context) => {
           })} />
       )}
       {!condi && (
+        <LabeledList.Item label="Patch type">
+          {patch_styles.map(patch => (
+            <Button
+              key={patch.style}
+              selected={patch.style === patch_style}
+              textAlign="center"
+              color="transparent"
+              onClick={() => act('change_patch_style', { patch_style: patch.style })}>
+              <Box mb={0} mt={1} className={patch.class_name} />
+            </Button>
+          ))}
+        </LabeledList.Item>
+      )}
+      {!condi && (
         <PackagingControlsItem
           label="Patches"
           amount={patchAmount}
@@ -299,6 +321,19 @@ const PackagingControls = (props, context) => {
             volume: 'auto',
           })} />
       )}
+      {!condi && ( // SKYRAT EDIT HYPOVIALS
+        <PackagingControlsItem 
+          label="Hypovials"
+          amount={vialAmount}
+          amountUnit="vials"
+          sideNote="max 60u"
+          onChangeAmount={(e, value) => setVialAmount(value)}
+          onCreate={() => act('create', {
+            type: 'vial',
+            amount: vialAmount,
+            volume: 'auto',
+          })} /> // SKYRAT EDIT HYPOVIALS END
+      )} 
       {!!condi && (
         <LabeledList.Item label="Bottle type">
           <Button.Checkbox

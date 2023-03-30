@@ -1,6 +1,7 @@
 /datum/job/nanotrasen_representative
-	title = "Nanotrasen Representative"
-	department_head = list("Central Command")
+	title = JOB_NT_REP
+	description = "Represent Nanotrasen on the station, argue with the HoS about why he can't just field execute people for petty theft, get drunk in your office."
+	department_head = list(JOB_CENTCOM)
 	faction = FACTION_STATION
 	total_positions = 1
 	spawn_positions = 1
@@ -12,6 +13,8 @@
 	exp_required_type_department = EXP_TYPE_COMMAND
 	exp_granted_type = EXP_TYPE_CREW
 
+	department_for_prefs = /datum/job_department/captain
+
 	departments_list = list(
 		/datum/job_department/command,
 		/datum/job_department/central_command
@@ -21,7 +24,7 @@
 	plasmaman_outfit = /datum/outfit/plasmaman/nanotrasen_representative
 
 	paycheck = PAYCHECK_HARD
-	paycheck_department = ACCOUNT_SEC
+	paycheck_department = ACCOUNT_CMD
 
 	display_order = JOB_DISPLAY_ORDER_NANOTRASEN_REPRESENTATIVE
 	bounty_types = CIV_JOB_SEC
@@ -36,7 +39,7 @@
 
 	veteran_only = TRUE
 
-	job_flags = JOB_ANNOUNCE_ARRIVAL | JOB_CREW_MANIFEST | JOB_EQUIP_RANK | JOB_CREW_MEMBER | JOB_NEW_PLAYER_JOINABLE
+	job_flags = JOB_ANNOUNCE_ARRIVAL | JOB_CREW_MANIFEST | JOB_EQUIP_RANK | JOB_CREW_MEMBER | JOB_NEW_PLAYER_JOINABLE | JOB_BOLD_SELECT_TEXT | JOB_REOPEN_ON_ROUNDSTART_LOSS | JOB_ASSIGN_QUIRKS
 
 /datum/job/nanotrasen_representative/after_spawn(mob/living/H, mob/M, latejoin)
 	. = ..()
@@ -56,7 +59,7 @@
 	suit = /obj/item/clothing/suit/armor/vest/nanotrasen_representative
 	shoes = /obj/item/clothing/shoes/jackboots
 	head = /obj/item/clothing/head/nanotrasen_representative
-	backpack_contents = list(/obj/item/melee/classic_baton/telescopic)
+	backpack_contents = list(/obj/item/melee/baton/telescopic)
 
 	skillchips = list(/obj/item/skillchip/disk_verifier)
 
@@ -91,7 +94,8 @@
 
 /obj/effect/landmark/start/nanotrasen_representative
 	name = "Nanotrasen Representative"
-	icon_state = "Captain"
+	icon_state = "Nanotrasen Representative"
+	icon = 'modular_skyrat/master_files/icons/mob/landmarks.dmi'
 
 /obj/item/clothing/accessory/medal/gold/nanotrasen_representative
 	name = "medal of diplomacy"
@@ -136,28 +140,17 @@
 
 /obj/structure/closet/secure_closet/nanotrasen_representative/station/PopulateContents()
 	..()
-	new /obj/item/clothing/suit/armor/vest/nanotrasen_representative(src)
 	new /obj/item/storage/backpack/satchel/leather(src)
 	new /obj/item/clothing/neck/petcollar(src)
 	new /obj/item/pet_carrier(src)
 	new /obj/item/clothing/shoes/sneakers/brown(src)
-	new /obj/item/clothing/under/rank/nanotrasen_representative(src)
-	new /obj/item/clothing/under/rank/nanotrasen_representative/skirt(src)
 	new /obj/item/clothing/suit/armor/vest(src)
-	new /obj/item/clothing/head/nanotrasen_representative(src)
-	new /obj/item/clothing/head/nanotrasen_representative/beret(src)
-	new /obj/item/clothing/head/beret/centcom_formal/ntrep(src)
 	new /obj/item/cartridge/captain(src)
 	new /obj/item/radio/headset/heads/nanotrasen_representative/alt(src)
 	new /obj/item/radio/headset/heads/nanotrasen_representative(src)
-	new /obj/item/clothing/glasses/sunglasses/gar/supergar(src)
+	new /obj/item/clothing/glasses/sunglasses/gar/giga(src)
 	new /obj/item/clothing/gloves/combat(src)
-	new /obj/item/storage/box/gunset/nanotrasen_representative(src)
 	new /obj/item/storage/photo_album/personal(src)
 	new /obj/item/bedsheet/centcom(src)
-	new /obj/item/clothing/suit/toggle/armor/vest/centcom_formal/ntrep(src)
 	new /obj/item/clothing/suit/hooded/wintercoat/centcom/ntrep(src)
-	new /obj/item/clothing/head/centhat(src)
-	new /obj/item/clothing/head/centcom_cap(src)
-
-
+	new /obj/item/gun/energy/e_gun(src)

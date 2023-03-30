@@ -4,13 +4,22 @@
 /////////////////
 
 /obj/machinery/gun_vendor
-	name = "Armadyne Weapons Dispensary"
+	name = "Armadyne weapons dispensary"
 	desc = "This accepts armament tokens in exchange for weapons, please present your token for redemption."
 	icon = 'modular_skyrat/modules/sec_haul/icons/guns/gunsets.dmi'
 	icon_state = "gunvend"
 	use_power = NO_POWER_USE
+	circuit = /obj/item/circuitboard/machine/gun_vendor
 	max_integrity = 2000
 	density = TRUE
+
+/obj/item/circuitboard/machine/gun_vendor
+	name = "Weapons Dispenser (Machine Board)"
+	icon_state = "circuit_map"
+	build_path = /obj/machinery/gun_vendor
+	req_components = list(
+		/obj/item/stock_parts/manipulator = 2,
+		/obj/item/stock_parts/capacitor = 2)
 
 /obj/structure/gun_vendor/wrench_act(mob/living/user, obj/item/item)
 	default_unfasten_wrench(user, item, 120)
@@ -23,7 +32,7 @@
 
 /obj/machinery/gun_vendor/proc/RedeemToken(obj/item/armament_token/token, mob/redeemer)
 	if(seclevel2num(get_security_level()) < token.minimum_sec_level)
-		to_chat(redeemer, "<span class='redtext'>Warning, this holochip is locked to [num2seclevel(token.minimum_sec_level)]!</span>")
+		to_chat(redeemer, span_redtext("Warning, this holochip is locked to [num2seclevel(token.minimum_sec_level)]!"))
 		message_admins("ARMAMENT LOG: [redeemer] attempted to redeem a [token.name] on the incorrect security level!")
 		return
 	var/list/radial_build = token.get_available_gunsets()
@@ -38,9 +47,9 @@
 	var/obj/item/storage/box/gunset/dispensed = new chosen_gunset(src.loc)
 
 	if(redeemer.CanReach(src) && redeemer.put_in_hands(dispensed))
-		to_chat(redeemer, "<span class='notice'>You take [dispensed] out of the slot.</span>")
+		to_chat(redeemer, span_notice("You take [dispensed] out of the slot."))
 	else
-		to_chat(redeemer, "<span class='warning'>[dispensed] falls onto the floor!</span>")
+		to_chat(redeemer, span_warning("[dispensed] falls onto the floor!"))
 	playsound(src, 'sound/machines/machine_vend.ogg', 50, TRUE, extrarange = -3)
 	to_chat(redeemer, "Thank you for redeeming your token. Remember. Do NOT take lethal ammo without permission or good reasoning.")
 	SSblackbox.record_feedback("tally", "armament_token_redeemed", 1, dispensed)
@@ -224,29 +233,3 @@
 	new /obj/item/armament_token/energy(src)
 	new /obj/item/armament_token/energy(src)
 	new /obj/item/armament_token/energy(src)
-
-//Sergeants!
-/obj/item/armament_token/sarge
-	name = "security sergeant holochip"
-	icon = 'modular_skyrat/modules/sec_haul/icons/guns/gunsets.dmi'
-	icon_state = "token_sarge"
-	desc = "A holochip used in any armament vendor, this is for promoting officers to Sergeants. Do not bend."
-
-/obj/item/armament_token/sarge/get_available_gunsets()
-	return list(
-	/obj/item/storage/box/gunset/sarge = image(
-		icon = 'modular_skyrat/modules/sec_haul/icons/peacekeeper/peacekeeper_items.dmi',
-		icon_state = "peacekeeper_sergeant_cap"
-		)
-	)
-
-/obj/item/storage/box/armament_tokens_sarge
-	name = "security sarge tokens"
-	icon = 'modular_skyrat/modules/sec_haul/icons/guns/gunsets.dmi'
-	icon_state = "armadyne_sarge"
-	desc = "A box full of sergeant promotion tokens!"
-	illustration = null
-
-/obj/item/storage/box/armament_tokens_sarge/PopulateContents()
-	. = ..()
-	new /obj/item/armament_token/sarge(src)

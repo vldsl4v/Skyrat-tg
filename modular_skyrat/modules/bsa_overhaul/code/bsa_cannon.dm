@@ -22,6 +22,11 @@
 		Base parts are available for shipping via cargo.
 		-Nanotrasen Naval Command"}
 
+/datum/station_goal/bluespace_cannon/on_report()
+	//Unlock BSA parts
+	var/datum/supply_pack/engineering/bsa/P = SSshuttle.supply_packs[/datum/supply_pack/engineering/bsa]
+	P.special_enabled = TRUE
+
 /datum/station_goal/bluespace_cannon/check_completion()
 	if(..())
 		return TRUE
@@ -50,7 +55,7 @@
 		return
 	var/obj/item/multitool/M = I
 	M.buffer = src
-	to_chat(user, "<span class='notice'>You store linkage information in [I]'s buffer.</span>")
+	to_chat(user, span_notice("You store linkage information in [I]'s buffer."))
 	return TRUE
 
 /obj/machinery/bsa/front
@@ -63,7 +68,7 @@
 		return
 	var/obj/item/multitool/M = I
 	M.buffer = src
-	to_chat(user, "<span class='notice'>You store linkage information in [I]'s buffer.</span>")
+	to_chat(user, span_notice("You store linkage information in [I]'s buffer."))
 	return TRUE
 
 /obj/machinery/bsa/middle
@@ -81,13 +86,13 @@
 		if(istype(M.buffer, /obj/machinery/bsa/back))
 			back = M.buffer
 			M.buffer = null
-			to_chat(user, "<span class='notice'>You link [src] with [back].</span>")
+			to_chat(user, span_notice("You link [src] with [back]."))
 		else if(istype(M.buffer, /obj/machinery/bsa/front))
 			front = M.buffer
 			M.buffer = null
-			to_chat(user, "<span class='notice'>You link [src] with [front].</span>")
+			to_chat(user, span_notice("You link [src] with [front]."))
 	else
-		to_chat(user, "<span class='warning'>[I]'s data buffer is empty!</span>")
+		to_chat(user, span_warning("[I]'s data buffer is empty!"))
 	return TRUE
 
 /obj/machinery/bsa/middle/proc/check_completion()
@@ -237,7 +242,7 @@
 	var/turf/point = get_front_turf()
 	var/turf/target = get_target_turf()
 	var/atom/movable/blocker
-	for(var/T in getline(get_step(point, dir), target))
+	for(var/T in get_line(get_step(point, dir), target))
 		var/turf/tile = T
 		if(SEND_SIGNAL(tile, COMSIG_ATOM_BSA_BEAM) & COMSIG_ATOM_BLOCKS_BSA_BEAM)
 			blocker = tile
@@ -277,8 +282,10 @@
 	STOP_PROCESSING(SSobj, src)
 
 /obj/machinery/bsa/full/Destroy()
-	control_unit.cannon = null
-	control_unit = null
+	if(control_unit)
+		if(control_unit.cannon)
+			control_unit.cannon = null
+		control_unit = null
 	. = ..()
 
 /obj/structure/filler
@@ -310,7 +317,7 @@
 		return
 	var/obj/item/multitool/M = I
 	M.buffer = src
-	to_chat(user, "<span class='notice'>You store linkage information in [I]'s buffer.</span>")
+	to_chat(user, span_notice("You store linkage information in [I]'s buffer."))
 	return TRUE
 
 /obj/machinery/bsa_powercore/wrench_act(mob/living/user, obj/item/I)
@@ -318,22 +325,23 @@
 	default_unfasten_wrench(user, I, 10)
 	if(anchored)
 		var/turf/T = loc
-		if(isturf(T) && !T.intact)
+		if(isturf(T) && T.underfloor_accessibility >= UNDERFLOOR_INTERACTABLE)
 			attached = locate() in T
 			if(!attached)
 				set_light(0)
-				to_chat(user, "<span class='warning'>[src] must be placed over an exposed, powered cable node!</span>")
+				to_chat(user, span_warning("[src] must be placed over an exposed, powered cable node!"))
 			else
 				set_light(5)
-				to_chat(user, "<span class='notce'>You attach [src] to the cable below.")
+				to_chat(user, span_notice("You attach [src] to the cable below."))
 	else
 		attached = null
 	update_appearance()
 	return TRUE
 
 /obj/machinery/bsa_powercore/Destroy()
-	control_unit.core = null
-	control_unit = null
+	if(control_unit)
+		control_unit.core = null
+		control_unit = null
 	attached = null
 	. = ..()
 

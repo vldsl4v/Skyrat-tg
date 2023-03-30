@@ -308,11 +308,6 @@ Key procs
 								/datum/language/slime = list(LANGUAGE_ATOM))
 	spoken_languages = list(/datum/language/slime = list(LANGUAGE_ATOM))
 
-/datum/language_holder/swarmer
-	understood_languages = list(/datum/language/swarmer = list(LANGUAGE_ATOM))
-	spoken_languages = list(/datum/language/swarmer = list(LANGUAGE_ATOM))
-	blocked_languages = list(/datum/language/common = list(LANGUAGE_ATOM))
-
 /datum/language_holder/venus
 	understood_languages = list(/datum/language/sylvan = list(LANGUAGE_ATOM))
 	spoken_languages = list(/datum/language/sylvan = list(LANGUAGE_ATOM))
@@ -323,6 +318,7 @@ Key procs
 	spoken_languages = list(/datum/language/buzzwords = list(LANGUAGE_ATOM))
 	blocked_languages = list(/datum/language/common = list(LANGUAGE_ATOM))
 
+/* SKYRAT EDIT REMOVAL - Moved to modular_skyrat\master_files\code\modules\language\language_holders.dm
 /datum/language_holder/synthetic
 	understood_languages = list(/datum/language/common = list(LANGUAGE_ATOM),
 								/datum/language/uncommon = list(LANGUAGE_ATOM),
@@ -340,6 +336,7 @@ Key procs
 							/datum/language/calcic = list(LANGUAGE_ATOM),
 							/datum/language/voltaic = list(LANGUAGE_ATOM),
 							/datum/language/nekomimetic = list(LANGUAGE_ATOM))
+*/ /// SKYRAT EDIT END
 
 /datum/language_holder/moth
 	understood_languages = list(/datum/language/common = list(LANGUAGE_ATOM),

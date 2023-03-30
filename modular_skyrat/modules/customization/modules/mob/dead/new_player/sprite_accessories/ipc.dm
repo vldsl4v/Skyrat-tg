@@ -9,6 +9,10 @@
 	generic = "Screen"
 	relevent_layers = list(BODY_ADJ_LAYER)
 
+/datum/sprite_accessory/screen/none
+	name = "None"
+	icon_state = "none"
+
 /datum/sprite_accessory/screen/blank
 	name = "Blank"
 	icon_state = "blank"
@@ -182,6 +186,10 @@
 	key = "ipc_chassis"
 	generic = "Chassis Type"
 
+/datum/sprite_accessory/ipc_chassis/none
+	name = "None"
+	icon_state = "none"
+
 /datum/sprite_accessory/ipc_chassis/mcgreyscale
 	name = "Morpheus Cyberkinetics(Greyscale)"
 	icon_state = "mcgipc"
@@ -222,3 +230,7 @@
 /datum/sprite_accessory/ipc_chassis/zenghupharmaceuticals
 	name = "Zeng-Hu Pharmaceuticals"
 	icon_state = "zhpipc"
+
+/datum/sprite_accessory/ipc_chassis/e3n
+	name = "E3N AI"
+	icon_state = "e3n"

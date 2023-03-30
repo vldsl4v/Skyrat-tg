@@ -29,9 +29,8 @@ export const NtosCardContent = (props, context) => {
     accessFlags,
     accessFlagNames,
     showBasic,
+    templates = {},
   } = data;
-
-  const { templates } = data || {};
 
   if (!have_id_slot) {
     return (
@@ -216,7 +215,7 @@ const IDCardTarget = (props, context) => {
               <NumberInput
                 value={id_age || 0}
                 unit="Years"
-                minValue={17}
+                minValue={18}
                 maxValue={85}
                 onChange={(e, value) => { act('PRG_age', {
                   id_age: value,

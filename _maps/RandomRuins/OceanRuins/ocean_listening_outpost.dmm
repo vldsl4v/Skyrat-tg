@@ -126,7 +126,7 @@
 /area/ruin/ocean/listening_outpost)
 "fe" = (
 /obj/machinery/airalarm/unlocked{
-	dir = 8;
+	dir = 4;
 	pixel_x = 26
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden{
@@ -290,7 +290,7 @@
 /area/ruin/ocean/listening_outpost)
 "mn" = (
 /obj/machinery/airalarm/unlocked{
-	dir = 8;
+	dir = 4;
 	pixel_x = 26
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden,
@@ -396,9 +396,7 @@
 /turf/open/floor/iron,
 /area/ruin/ocean/listening_outpost)
 "oR" = (
-/obj/effect/spawner/randomsnackvend{
-	hacked = 1
-	},
+/obj/effect/spawner/random/vending/snackvend,
 /obj/effect/decal/cleanable/dirt,
 /turf/open/floor/iron,
 /area/ruin/ocean/listening_outpost)
@@ -445,7 +443,7 @@
 /area/ruin/ocean/listening_outpost)
 "rs" = (
 /obj/machinery/airalarm/unlocked{
-	dir = 8;
+	dir = 4;
 	pixel_x = 26
 	},
 /obj/effect/decal/cleanable/dirt,
@@ -863,20 +861,20 @@
 /area/ruin/ocean/listening_outpost)
 "Lg" = (
 /obj/structure/table/wood,
-/obj/item/reagent_containers/food/drinks/beer{
+/obj/item/reagent_containers/food/drinks/bottle/beer{
 	pixel_x = -4;
 	pixel_y = 14
 	},
-/obj/item/reagent_containers/food/drinks/beer{
+/obj/item/reagent_containers/food/drinks/bottle/beer{
 	pixel_x = 3;
 	pixel_y = 11
 	},
-/obj/item/reagent_containers/food/drinks/beer,
+/obj/item/reagent_containers/food/drinks/bottle/beer,
 /turf/open/floor/wood,
 /area/ruin/ocean/listening_outpost)
 "LE" = (
 /obj/machinery/airalarm/unlocked{
-	dir = 8;
+	dir = 4;
 	pixel_x = 26
 	},
 /obj/machinery/atmospherics/components/unary/vent_scrubber/on{
@@ -959,9 +957,7 @@
 /turf/closed/wall/rust,
 /area/template_noop)
 "Qq" = (
-/obj/effect/spawner/randomcolavend{
-	hacked = 1
-	},
+/obj/effect/spawner/random/vending/colavend,
 /obj/effect/decal/cleanable/dirt,
 /turf/open/floor/iron,
 /area/ruin/ocean/listening_outpost)
@@ -1058,7 +1054,7 @@
 /turf/open/floor/iron,
 /area/ruin/ocean/listening_outpost)
 "VJ" = (
-/obj/effect/spawner/randomarcade,
+/obj/effect/spawner/random/entertainment/arcade,
 /obj/machinery/light/small{
 	dir = 1
 	},
@@ -1088,7 +1084,8 @@
 /area/ruin/ocean/listening_outpost)
 "WP" = (
 /obj/machinery/airalarm/unlocked{
-	pixel_y = 23
+	pixel_y = 23;
+	dir = 1
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden{
 	dir = 6;
@@ -1107,7 +1104,8 @@
 /area/ruin/ocean/listening_outpost)
 "XJ" = (
 /obj/machinery/airalarm/unlocked{
-	pixel_y = 23
+	pixel_y = 23;
+	dir = 1
 	},
 /obj/structure/tank_dispenser/oxygen{
 	oxygentanks = 4

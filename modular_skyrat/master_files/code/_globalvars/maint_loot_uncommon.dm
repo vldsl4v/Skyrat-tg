@@ -7,6 +7,9 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/skillchip/job/engineer = 10,
 		/obj/item/skillchip/job/roboticist = 10,
 		/obj/item/skillchip/light_remover = 10,
+		/obj/item/skillchip/glassblowing_master = 10,
+		/obj/item/skillchip/ceramic_master = 10,
+		/obj/item/skillchip/fishing_master = 10,
 		/obj/item/skillchip/useless_adapter = 25,
 		/obj/item/skillchip/wine_taster = 50
 	) = 50,
@@ -52,7 +55,6 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/cartridge/roboticist = 50,
 		/obj/item/cartridge/security = 50,
 		/obj/item/cartridge/signal = 100,
-		/obj/item/cartridge/signal/toxins = 50,
 		/obj/item/cartridge/virus/clown = 5,
 		/obj/item/cartridge/virus/mime = 5
 	) = 50,
@@ -118,7 +120,7 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/language_manual/roundstart_species = 5,
 		/obj/item/lazarus_injector = 5,
 		/obj/item/melee/baseball_bat = 50,
-		/obj/item/melee/baton/cattleprod = 100,
+		/obj/item/melee/baton/security/cattleprod = 100,
 		/obj/item/melee/skateboard/pro = 25,
 		/obj/item/melee/skateboard = 25,
 		/obj/item/mining_voucher = 5,
@@ -138,8 +140,6 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/ammo_casing/shotgun/buckshot = 50,
 		/obj/item/ammo_casing/shotgun/improvised = 200,
 		/obj/item/ammo_casing/a357 = 25,
-		/obj/item/ammo_casing/a556 = 50,
-		/obj/item/ammo_casing/a556/rubber = 25,
 		/obj/item/ammo_casing/a762 = 25,
 		/obj/item/ammo_casing/c10mm = 25,
 		/obj/item/ammo_casing/c32 = 50,
@@ -164,6 +164,8 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/banhammer = 25,
 		/obj/item/bikehorn/airhorn = 25,
 		/obj/item/book/granter/spell/smoke/lesser = 5,
+		/obj/item/book/granter/crafting_recipe/pipegun_prime = 5,
+		/obj/item/book/granter/crafting_recipe/trash_cannon = 5,
 		/obj/item/bountytrap = 25,
 		/obj/item/camera/spooky = 5,
 		/obj/item/capturedevice = 5,
@@ -187,13 +189,12 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/greentext/quiet = 5,
 		/obj/item/grenade/antigravity = 5,
 		/obj/item/grenade/chem_grenade/colorful = 50,
-		/obj/item/grenade/chem_grenade/ez_clean = 25,
 		/obj/item/grenade/firecracker = 25,
 		/obj/item/grenade/stingbang = 25,
+		/obj/item/tattoo_kit = 5,
 		/obj/item/instrument/musicalmoth = 5,
 		/obj/item/instrument/piano_synth/headphones/spacepods = 5,
 		/obj/item/instrument/violin/golden = 5,
-		/obj/item/melee/baton/cattleprod/teleprod = 100,
 		/obj/item/melee/chainofcommand/tailwhip/kitty = 25,
 		/obj/item/melee/chainofcommand/tailwhip = 25,
 		/obj/item/melee/flyswatter = 100,
@@ -202,7 +203,6 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/rsf = 5,
 		/obj/item/rupee = 5,
 		/obj/item/sord = 5,
-		/obj/item/stack/telecrystal/five = 5,
 		/obj/item/stack/telecrystal = 5,
 		/obj/item/storage/belt/utility/syndicate = 5,
 		/obj/item/storage/box/firecrackers = 10,
@@ -268,7 +268,6 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/hot_potato/harmless = 25,
 		/obj/item/implanter/sad_trombone = 25,
 		/obj/item/reagent_containers/food/drinks/waterbottle = 25,
-		/obj/item/soapstone/empty = 25,
 		/obj/item/stamp = 5,
 		/obj/item/storage/backpack = 100,
 		/obj/item/storage/belt = 100,
@@ -277,6 +276,7 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 	) = 100,
 	list( //Improvised weapons and tools that are weapons.
 		/obj/item/gun/ballistic/revolver/rifle/improvised = 100,
+		/obj/item/gun/ballistic/rifle/boltaction/pipegun = 100,
 		/obj/item/scythe = 25,
 		/obj/item/throwing_star = 5,
 		/obj/item/throwing_star/stamina = 5
@@ -319,5 +319,9 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/eldritch_potion/crucible_soul = 1,
 		/obj/item/eldritch_potion/duskndawn = 1,
 		/obj/item/eldritch_potion/wounded = 1
-	) = 1
+	) = 1,
+	list( //Modsuits
+		/obj/item/mod/construction/broken_core = 1,
+		/obj/effect/spawner/random/mod/maint = 3,
+	) = 25
 ))

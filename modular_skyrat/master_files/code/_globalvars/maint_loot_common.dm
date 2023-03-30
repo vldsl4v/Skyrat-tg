@@ -92,6 +92,7 @@ GLOBAL_LIST_INIT(common_loot, list( //common: basic items
 		/obj/item/stack/sheet/sinew = 10
 	) = 50,
 	list( //Medical stuff
+		/obj/item/stock_parts/cell/lead = 25,
 		/obj/item/healthanalyzer = 25,
 		/obj/item/healthanalyzer/wound = 50,
 		/obj/item/reagent_containers/blood/random = 50,
@@ -111,7 +112,8 @@ GLOBAL_LIST_INIT(common_loot, list( //common: basic items
 		/obj/item/storage/firstaid/medical = 25,
 		/obj/item/storage/firstaid/o2 = 25,
 		/obj/item/storage/firstaid/regular = 25,
-		/obj/item/storage/firstaid/toxin = 25
+		/obj/item/storage/firstaid/toxin = 25,
+		/obj/item/lead_pipe = 25,
 	) = 100,
 	list( //Tools you'd get in tool storage and elsewhere
 		/obj/item/screwdriver = 100,
@@ -295,8 +297,8 @@ GLOBAL_LIST_INIT(common_loot, list( //common: basic items
 		/obj/item/instrument/violin = 1
 	) = 50,
 	list( //Unimportant clothing
-		/obj/item/clothing/accessory/fan_clown_pin = 25,
-		/obj/item/clothing/accessory/fan_mime_pin = 25,
+		/obj/item/clothing/accessory/clown_enjoyer_pin = 25,
+		/obj/item/clothing/accessory/mime_fan_pin = 25,
 		/obj/item/clothing/accessory/lawyers_badge = 5,
 		/obj/item/clothing/accessory/waistcoat = 25,
 		/obj/item/clothing/ears/headphones = 5,
@@ -353,6 +355,7 @@ GLOBAL_LIST_INIT(common_loot, list( //common: basic items
 		/obj/item/food/meat/slab/human/mutant/shadow = 1,
 		/obj/item/food/meat/slab/human/mutant/skeleton = 1,
 		/obj/item/food/meat/slab/human/mutant/slime = 1,
-		/obj/item/food/meat/slab/human/mutant/zombie = 1
+		/obj/item/food/meat/slab/human/mutant/zombie = 1,
+		/obj/item/seeds/kronkus = 1,
 	) = 25
 ))

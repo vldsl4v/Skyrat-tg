@@ -77,29 +77,16 @@
 
 /datum/biohazard_blob_controller/Destroy()
 	STOP_PROCESSING(SSobj, src)
+	all_resin = null
+	active_resin = null
+	our_core = null
+	other_structures = null
 	return ..()
 
 /datum/biohazard_blob_controller/proc/CoreRetaliated()
 	structure_progression += PROGRESSION_RETALIATED
 	active_resin.Cut()
 	ActivateAdjacentResinRecursive(get_turf(our_core), 4)
-
-/datum/biohazard_blob_controller/proc/CoreDeath()
-	active_resin.Cut()
-	for(var/t in all_resin)
-		var/obj/structure/biohazard_blob/resin/a_resin = t
-		a_resin.color = null
-		if(a_resin.blooming)
-			a_resin.blooming = FALSE
-			a_resin.set_light(0)
-			a_resin.update_overlays()
-	for(var/obj/structure/biohazard_blob/structure/conditioner/c in other_structures)
-		var/obj/structure/biohazard_blob/structure/our_structure = c
-		qdel(our_structure)
-	for(var/obj/structure/biohazard_blob/structure/spawner/s in other_structures)
-		var/obj/structure/biohazard_blob/structure/our_structure = s
-		qdel(our_structure)
-	return
 
 /datum/biohazard_blob_controller/proc/TrySpreadResin(obj/structure/biohazard_blob/resin/spreaded_resin)
 	. = RESIN_CANT_SPREAD
@@ -129,7 +116,7 @@
 			break
 
 	var/list/possible_locs = list(ownturf) //Ownturf, because it could spread into the same turf, but on the wall
-	for(var/T in ownturf.GetAtmosAdjacentTurfs())
+	for(var/T in ownturf.get_atmos_adjacent_turfs())
 		//We encounter a space turf? Make a thick wall to block of that nasty vacuum
 		if(isspaceturf(T))
 			if(!locate(/obj/structure/biohazard_blob/structure/wall, ownturf))
@@ -179,7 +166,7 @@
 	for(var/i in 1 to iterations)
 		for(var/t in turfs)
 			var/turf/open = t
-			for(var/atmoadj in open.GetAtmosAdjacentTurfs())
+			for(var/atmoadj in open.get_atmos_adjacent_turfs())
 				turfs[atmoadj] = TRUE
 	for(var/t in turfs)
 		var/turf/ite_turf = t
@@ -193,7 +180,7 @@
 		//We're dead, no point in doing this
 		return
 	var/list/turfs = list(centrum_turf)
-	for(var/t in centrum_turf.GetAtmosAdjacentTurfs())
+	for(var/t in centrum_turf.get_atmos_adjacent_turfs())
 		turfs += t
 	for(var/t in turfs)
 		var/turf/ite_turf = t

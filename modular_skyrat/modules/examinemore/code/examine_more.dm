@@ -19,7 +19,7 @@ would only be recognisable with someone that had the syndicate trait.
 	//The ROLE requirement setting if EXAMINE_CHECK_ROLE is set. E.g. ROLE_SYNDICATE. As you can see, it's a list. So when setting it, ensure you do = list(shit1, shit2)
 	var/list/special_desc_roles
 
-	//The JOB requirement setting if EXAMINE_CHECK_JOB is set. E.g. "Security Officer". As you can see, it's a list. So when setting it, ensure you do = list(shit1, shit2)
+	//The JOB requirement setting if EXAMINE_CHECK_JOB is set. E.g. JOB_SECURITY_OFFICER. As you can see, it's a list. So when setting it, ensure you do = list(shit1, shit2)
 	var/list/special_desc_jobs
 
 	//The FACTION requirement setting if EXAMINE_CHECK_FACTION is set. E.g. "Syndicate". As you can see, it's a list. So when setting it, ensure you do = list(shit1, shit2)
@@ -27,7 +27,7 @@ would only be recognisable with someone that had the syndicate trait.
 
 
 /obj/item/examine_more(mob/user)
-	. = list()
+	. = ..()
 	if(special_desc)
 		var/composed_message
 		switch(special_desc_requirement)
@@ -94,10 +94,6 @@ would only be recognisable with someone that had the syndicate trait.
 						composed_message = "You note the following because of your loyalty to <b>[faction_i]</b>: <br>"
 						composed_message += special_desc
 						. += composed_message
-
-	SEND_SIGNAL(src, COMSIG_PARENT_EXAMINE_MORE, user, .)
-	if(!LAZYLEN(.)) // lol ..length
-		return list("<span class='notice'><i>You examine [src] closer, but find nothing of interest...</i></span>")
 
 //////////
 //Examples:

@@ -43,24 +43,24 @@
 	icon_state = "ntrep_cap"
 	inhand_icon_state = "that"
 	flags_inv = 0
-	armor = list(MELEE = 15, BULLET = 5, LASER = 15, ENERGY = 25, BOMB = 10, BIO = 0, RAD = 0, FIRE = 30, ACID = 5, WOUND = 4)
+	armor = list(MELEE = 15, BULLET = 5, LASER = 15, ENERGY = 25, BOMB = 10, BIO = 0, FIRE = 30, ACID = 5, WOUND = 4)
 	strip_delay = 60
 	dog_fashion = null
 	mutant_variants = NONE
 
 /obj/item/clothing/head/nanotrasen_representative/beret
 	name = "nanotrasen representative's beret"
-	desc =  "A beret made from durathread, it has an insignia on the front denoting the rank of a Nanotrasen Representative."
+	desc = "A beret made from durathread, it has an insignia on the front denoting the rank of a Nanotrasen Representative."
 	greyscale_config = /datum/greyscale_config/beret_badge
 	greyscale_config_worn = /datum/greyscale_config/beret_badge/worn
 	greyscale_colors = "#3F3C40#155326"
 	icon_state = "beret_badge"
 
 /obj/item/clothing/head/beret/centcom_formal/ntrep
-	armor = list(MELEE = 15, BULLET = 5, LASER = 15, ENERGY = 25, BOMB = 10, BIO = 0, RAD = 0, FIRE = 30, ACID = 5, WOUND = 4)
+	armor = list(MELEE = 15, BULLET = 5, LASER = 15, ENERGY = 25, BOMB = 10, BIO = 0, FIRE = 30, ACID = 5, WOUND = 4)
 
-/obj/item/clothing/suit/toggle/armor/vest/centcom_formal/ntrep
-	armor = list(MELEE = 35, BULLET = 30, LASER = 30, ENERGY = 40, BOMB = 25, BIO = 0, RAD = 0, FIRE = 50, ACID = 50, WOUND = 10)
+/obj/item/clothing/suit/armor/centcom_formal/ntrep
+	armor = list(MELEE = 35, BULLET = 30, LASER = 30, ENERGY = 40, BOMB = 25, BIO = 0, FIRE = 50, ACID = 50, WOUND = 10)
 
 /obj/item/clothing/suit/hooded/wintercoat/centcom/ntrep
-	armor = list(MELEE = 35, BULLET = 30, LASER = 30, ENERGY = 40, BOMB = 25, BIO = 0, RAD = 0, FIRE = 50, ACID = 50, WOUND = 10)
+	armor = list(MELEE = 35, BULLET = 30, LASER = 30, ENERGY = 40, BOMB = 25, BIO = 0, FIRE = 50, ACID = 50, WOUND = 10)

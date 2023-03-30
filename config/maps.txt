@@ -36,6 +36,7 @@ endmap
 
 map tramstation
 	minplayers 35
+endmap
 
 map waterkilostation
 	votable
@@ -51,5 +52,10 @@ endmap
 
 map nssjourney
 	minplayers 25
+	votable
+endmap
+
+map blueshift
+	minplayers 50
 	votable
 endmap

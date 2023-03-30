@@ -46,6 +46,18 @@
 #define ui_storage1 "CENTER+1:18,SOUTH:5"
 #define ui_storage2 "CENTER+2:20,SOUTH:5"
 #define ui_combo "CENTER+4:24,SOUTH+1:7" //combo meter for martial arts
+//SKYRAT EDIT ADDITION BEGIN - ERP_SLOT_SYSTEM
+#define ui_vagina "WEST+1:8,SOUTH+4:14"
+#define ui_vagina_down "WEST+1:8,SOUTH+1:8"
+#define ui_anus "WEST+2:10,SOUTH+4:14"
+#define ui_anus_down "WEST+2:10,SOUTH+1:8"
+#define ui_nipples "WEST:6,SOUTH+5:17"
+#define ui_nipples_down "WEST:6,SOUTH+2:11"
+#define ui_penis "WEST+1:8,SOUTH+5:17"
+#define ui_penis_down "WEST+1:8,SOUTH+2:11"
+#define ui_erp_inventory "WEST:6,SOUTH+1:8"
+#define ui_erp_inventory_up "WEST:6,SOUTH+4:14"
+//SKYRAT EDI ADDITION END
 
 //Lower right, persistent menu
 #define ui_drop_throw "EAST-1:28,SOUTH+1:7"
@@ -71,9 +83,10 @@
 //Middle right (status indicators)
 #define ui_healthdoll "EAST-1:28,CENTER-2:13"
 #define ui_health "EAST-1:28,CENTER-1:15"
-#define ui_internal "EAST-1:28,CENTER-3:10"
+#define ui_internal "EAST-1:28,CENTER+1:17"
 #define ui_mood "EAST-1:28,CENTER:17"
 #define ui_spacesuit "EAST-1:28,CENTER-4:10"
+#define ui_stamina "EAST-1:28,CENTER-3:10"
 
 //Pop-up inventory
 #define ui_shoes "WEST+1:8,SOUTH:5"
@@ -173,7 +186,7 @@
 #define ui_ghost_reenter_corpse "SOUTH:6,CENTER-1:24"
 #define ui_ghost_teleport "SOUTH:6,CENTER:24"
 #define ui_ghost_pai "SOUTH: 6, CENTER+1:24"
-#define ui_ghost_mafia "SOUTH: 6, CENTER+2:24"
+#define ui_ghost_minigames "SOUTH: 6, CENTER+2:24"
 #define ui_ghost_language_menu "SOUTH: 22, CENTER+3:8"
 
 //Blobbernauts

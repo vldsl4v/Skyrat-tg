@@ -61,8 +61,22 @@
 /// Legcuff slot (bolas, beartraps)
 #define ITEM_SLOT_LEGCUFFED (1<<19)
 
+//SKYRAT EDIT ADDITION BEGIN - ERP UPDATE
+/// Penis slot
+#define ITEM_SLOT_PENIS (1<<20)
+/// Vagina slot
+#define ITEM_SLOT_VAGINA (1<<21)
+/// Anus slot
+#define ITEM_SLOT_ANUS (1<<22)
+/// Nipples slot
+#define ITEM_SLOT_NIPPLES (1<<23)
+//SKYRATE EDIT ADDITION END
+
 /// Total amount of slots
-#define SLOTS_AMT 20 // Keep this up to date!
+//SKYRAT EDIT CHANGE BEGIN
+// #define SLOTS_AMT 20 // Keep this up to date! - SKYRAT EDIT - ORIGINAL
+#define SLOTS_AMT 24 // Keep this up to date!
+//SKYRAT EDIT CHANGE END
 
 //SLOT GROUP HELPERS
 #define ITEM_SLOT_POCKETS (ITEM_SLOT_LPOCKET|ITEM_SLOT_RPOCKET)
@@ -84,6 +98,13 @@
 #define HIDEHEADGEAR (1<<11)
 ///for lizard snouts, because some HIDEFACE clothes don't actually conceal that portion of the head.
 #define HIDESNOUT (1<<12)
+///SKYRAT EDIT ADDITION: CUSTOM EAR TOGGLE FOR ANTHRO/ETC EAR SHOWING - Manually set this on items you want anthro ears to show on!
+#define SHOWSPRITEEARS (1<<13)
+/// Does this sprite also hide the spine on tails? Realistically only useful for the clothes that have a special tail overlay, like MODsuits
+#define HIDESPINE (1<<14)
+//SKYRAT EDIT ADDITION BEGIN - ERP UPDATE
+#define HIDESEXTOY (1<<15)
+//SKYRAT EDIT ADDITION END
 
 //bitflags for clothing coverage - also used for limbs
 #define HEAD (1<<0)
@@ -149,32 +170,7 @@
 /// The index of the entry in 'afk_thefts' with the time it happened
 #define AFK_THEFT_TIME 3
 
-//Allowed equipment lists for security vests and hardsuits.
-
-GLOBAL_LIST_INIT(advanced_hardsuit_allowed, typecacheof(list(
-	/obj/item/ammo_box,
-	/obj/item/ammo_casing,
-	/obj/item/flashlight,
-	/obj/item/gun,
-	/obj/item/melee/baton,
-	/obj/item/melee/classic_baton,
-	/obj/item/reagent_containers/spray/pepper,
-	/obj/item/restraints/handcuffs,
-	/obj/item/tank/internals,
-	)))
-
-GLOBAL_LIST_INIT(security_hardsuit_allowed, typecacheof(list(
-	/obj/item/ammo_box,
-	/obj/item/ammo_casing,
-	/obj/item/flashlight,
-	/obj/item/gun/ballistic,
-	/obj/item/gun/energy,
-	/obj/item/melee/baton,
-	/obj/item/melee/classic_baton,
-	/obj/item/reagent_containers/spray/pepper,
-	/obj/item/restraints/handcuffs,
-	/obj/item/tank/internals,
-	)))
+//Allowed equipment lists for security vests.
 
 GLOBAL_LIST_INIT(detective_vest_allowed, typecacheof(list(
 	/obj/item/ammo_box,
@@ -185,13 +181,15 @@ GLOBAL_LIST_INIT(detective_vest_allowed, typecacheof(list(
 	/obj/item/gun/energy,
 	/obj/item/lighter,
 	/obj/item/melee/baton,
-	/obj/item/melee/classic_baton,
 	/obj/item/reagent_containers/spray/pepper,
 	/obj/item/restraints/handcuffs,
 	/obj/item/storage/fancy/cigarettes,
 	/obj/item/taperecorder,
 	/obj/item/tank/internals/emergency_oxygen,
 	/obj/item/tank/internals/plasmaman,
+	/obj/item/storage/belt/holster/detective,
+	/obj/item/storage/belt/holster/nukie,
+	/obj/item/gun/microfusion, //SKYRAT EDIT ADDITION
 	)))
 
 GLOBAL_LIST_INIT(security_vest_allowed, typecacheof(list(
@@ -200,15 +198,15 @@ GLOBAL_LIST_INIT(security_vest_allowed, typecacheof(list(
 	/obj/item/flashlight,
 	/obj/item/gun/ballistic,
 	/obj/item/gun/energy,
-	/obj/item/kitchen/knife/combat,
+	/obj/item/knife/combat,
 	/obj/item/melee/baton,
-	/obj/item/melee/classic_baton,
 	/obj/item/reagent_containers/spray/pepper,
 	/obj/item/restraints/handcuffs,
 	/obj/item/tank/internals/emergency_oxygen,
 	/obj/item/tank/internals/plasmaman,
 	/obj/item/storage/belt/holster/detective,
 	/obj/item/storage/belt/holster/nukie,
+	/obj/item/gun/microfusion, //SKYRAT EDIT ADDITION
 	)))
 
 GLOBAL_LIST_INIT(security_wintercoat_allowed, typecacheof(list(
@@ -217,11 +215,11 @@ GLOBAL_LIST_INIT(security_wintercoat_allowed, typecacheof(list(
 	/obj/item/gun/ballistic,
 	/obj/item/gun/energy,
 	/obj/item/melee/baton,
-	/obj/item/melee/classic_baton,
 	/obj/item/reagent_containers/spray/pepper,
 	/obj/item/restraints/handcuffs,
 	/obj/item/storage/belt/holster/detective,
 	/obj/item/storage/belt/holster/nukie,
+	/obj/item/gun/microfusion, //SKYRAT EDIT ADDITION
 	)))
 
 /// String for items placed into the left pocket.

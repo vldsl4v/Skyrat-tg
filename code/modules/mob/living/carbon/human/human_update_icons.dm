@@ -66,7 +66,7 @@ There are several things that need to be remembered:
 	..()
 
 /mob/living/carbon/human/update_fire()
-	..((fire_stacks > HUMAN_FIRE_STACK_ICON_NUM) ? "Standing" : "Generic_mob_burning")
+	..((fire_stacks > HUMAN_FIRE_STACK_ICON_NUM) ? dna.species.fire_overlay : "Generic_mob_burning")
 
 
 /* --------------------------------------- */
@@ -188,7 +188,7 @@ There are several things that need to be remembered:
 	apply_overlay(ID_LAYER)
 	//apply_overlay(ID_CARD_LAYER) //SKYRAT EDIT REMOVAL - Ugly ID
 
-
+/*
 /mob/living/carbon/human/update_inv_gloves()
 	remove_overlay(GLOVES_LAYER)
 
@@ -220,7 +220,7 @@ There are several things that need to be remembered:
 			gloves_overlay.pixel_y += dna.species.offset_features[OFFSET_GLOVES][2]
 	overlays_standing[GLOVES_LAYER] = gloves_overlay
 	apply_overlay(GLOVES_LAYER)
-
+*/
 
 //SKYRAT EDIT REMOVAL BEGIN - CUSTOMIZATION (moved to modular)
 /*
@@ -240,6 +240,7 @@ There are several things that need to be remembered:
 			if(hud_used.inventory_shown) //if the inventory is open ...
 				client.screen += glasses //Either way, add the item to the HUD
 		update_observer_view(glasses,1)
+		//This is in case the glasses would be going above the hair, like welding goggles that were lifted up
 		if(!(head && (head.flags_inv & HIDEEYES)) && !(wear_mask && (wear_mask.flags_inv & HIDEEYES)))
 			overlays_standing[GLASSES_LAYER] = glasses.build_worn_icon(default_layer = GLASSES_LAYER, default_icon_file = 'icons/mob/clothing/eyes.dmi')
 
@@ -250,9 +251,6 @@ There are several things that need to be remembered:
 				glasses_overlay.pixel_y += dna.species.offset_features[OFFSET_GLASSES][2]
 			overlays_standing[GLASSES_LAYER] = glasses_overlay
 	apply_overlay(GLASSES_LAYER)
-*/
-//SKYRAT EDIT REMOVAL END
-
 
 /mob/living/carbon/human/update_inv_ears()
 	remove_overlay(EARS_LAYER)
@@ -277,7 +275,8 @@ There are several things that need to be remembered:
 			ears_overlay.pixel_y += dna.species.offset_features[OFFSET_EARS][2]
 		overlays_standing[EARS_LAYER] = ears_overlay
 	apply_overlay(EARS_LAYER)
-
+*/
+//SKYRAT EDIT REMOVAL END
 
 //SKYRAT EDIT REMOVAL BEGIN - CUSTOMIZATION (moved to modular)
 /*
@@ -339,6 +338,11 @@ There are several things that need to be remembered:
 		if(OFFSET_HEAD in dna.species.offset_features)
 			head_overlay.pixel_x += dna.species.offset_features[OFFSET_HEAD][1]
 			head_overlay.pixel_y += dna.species.offset_features[OFFSET_HEAD][2]
+			//SKYRAT EDIT ADDITION BEGIN - TESHARI CLOTHES
+			if(head_overlay.icon == TESHARI_HEAD_ICON)
+				head_overlay.pixel_x = 0
+				head_overlay.pixel_y = 0
+			//SKYRAT EDIT ADDITION END - TESHARI CLOTHES
 			overlays_standing[HEAD_LAYER] = head_overlay
 	apply_overlay(HEAD_LAYER)
 
@@ -350,15 +354,30 @@ There are several things that need to be remembered:
 		inv.update_appearance()
 
 	if(belt)
+		//SKYRAT EDIT ADDITION BEGIN - TESHARI CLOTHES
+		var/icon_file = belt.worn_icon
+		var/applied_styles = NONE
+		if(isteshari(src))
+			var/static/list/tesh_icon_states = icon_states(TESHARI_BELT_ICON)
+			if((belt.worn_icon_state || belt.icon_state) in tesh_icon_states)
+				icon_file = TESHARI_BELT_ICON
+				applied_styles = STYLE_TESHARI
+		//SKYRAT EDIT ADDITION END - TESHARI CLOTHES
 		belt.screen_loc = ui_belt
 		if(client && hud_used?.hud_shown)
 			client.screen += belt
 		update_observer_view(belt)
-		overlays_standing[BELT_LAYER] = belt.build_worn_icon(default_layer = BELT_LAYER, default_icon_file = 'icons/mob/clothing/belt.dmi')
+		//SKYRAT EDIT - TESHARI CLOTHES - added override_icon and mutant_styles arguments to below function
+		overlays_standing[BELT_LAYER] = belt.build_worn_icon(default_layer = BELT_LAYER, default_icon_file = 'icons/mob/clothing/belt.dmi', override_icon = icon_file, mutant_styles = applied_styles)
 		var/mutable_appearance/belt_overlay = overlays_standing[BELT_LAYER]
 		if(OFFSET_BELT in dna.species.offset_features)
 			belt_overlay.pixel_x += dna.species.offset_features[OFFSET_BELT][1]
 			belt_overlay.pixel_y += dna.species.offset_features[OFFSET_BELT][2]
+			//SKYRAT EDIT ADDITION BEGIN - TESHARI CLOTHES
+			if(belt_overlay.icon == TESHARI_BELT_ICON)
+				belt_overlay.pixel_x = 0
+				belt_overlay.pixel_y = 0
+			//SKYRAT EDIT ADDITION END - TESHARI CLOTHES
 		overlays_standing[BELT_LAYER] = belt_overlay
 
 	apply_overlay(BELT_LAYER)
@@ -425,6 +444,11 @@ There are several things that need to be remembered:
 		if(OFFSET_FACEMASK in dna.species.offset_features)
 			mask_overlay.pixel_x += dna.species.offset_features[OFFSET_FACEMASK][1]
 			mask_overlay.pixel_y += dna.species.offset_features[OFFSET_FACEMASK][2]
+			//SKYRAT EDIT ADDITION BEGIN - TESHARI CLOTHES
+			if(mask_overlay.icon == TESHARI_MASK_ICON)
+				mask_overlay.pixel_x = 0
+				mask_overlay.pixel_y = 0
+			//SKYRAT EDIT ADDITION END - TESHARI CLOTHES
 			overlays_standing[FACEMASK_LAYER] = mask_overlay
 		apply_overlay(FACEMASK_LAYER)
 	update_mutant_bodyparts() //e.g. upgate needed because mask now hides lizard snout
@@ -437,6 +461,11 @@ There are several things that need to be remembered:
 		if(OFFSET_BACK in dna.species.offset_features)
 			back_overlay.pixel_x += dna.species.offset_features[OFFSET_BACK][1]
 			back_overlay.pixel_y += dna.species.offset_features[OFFSET_BACK][2]
+			//SKYRAT EDIT ADDITION BEGIN - TESHARI CLOTHES
+			if(back_overlay.icon == TESHARI_BACK_ICON)
+				back_overlay.pixel_x = 0
+				back_overlay.pixel_y = 0
+			//SKYRAT EDIT ADDITION END - TESHARI CLOTHES
 			overlays_standing[BACK_LAYER] = back_overlay
 		apply_overlay(BACK_LAYER)
 
@@ -446,20 +475,18 @@ There are several things that need to be remembered:
 	if(legcuffed)
 		var/mutable_appearance/legcuff_overlay = mutable_appearance('icons/mob/mob.dmi', "legcuff1", -LEGCUFF_LAYER)
 		if(legcuffed.blocks_emissive)
-			var/mutable_appearance/legcuff_blocker = mutable_appearance('icons/mob/mob.dmi', "legcuff1", plane = EMISSIVE_PLANE, appearance_flags = KEEP_APART)
-			legcuff_blocker.color = GLOB.em_block_color
-			legcuff_overlay.overlays += legcuff_blocker
+			legcuff_overlay.overlays += emissive_blocker(legcuff_overlay.icon, legcuff_overlay.icon_state, alpha = legcuff_overlay.alpha)
 
 		overlays_standing[LEGCUFF_LAYER] = legcuff_overlay
 		apply_overlay(LEGCUFF_LAYER)
 		throw_alert("legcuffed", /atom/movable/screen/alert/restrained/legcuffed, new_master = src.legcuffed)
 
-/proc/wear_female_version(t_color, icon, layer, type)
-	var/index = t_color
+/proc/wear_female_version(t_color, icon, layer, type, greyscale_colors)
+	var/index = "[t_color]-[greyscale_colors]"
 	var/icon/female_clothing_icon = GLOB.female_clothing_icons[index]
 	if(!female_clothing_icon) //Create standing/laying icons if they don't exist
-		generate_female_clothing(index,t_color,icon,type)
-	return mutable_appearance(GLOB.female_clothing_icons[t_color], layer = -layer)
+		generate_female_clothing(index, t_color, icon, type)
+	return mutable_appearance(GLOB.female_clothing_icons[index], layer = -layer)
 
 /mob/living/carbon/human/proc/get_overlays_copy(list/unwantedLayers)
 	var/list/out = new
@@ -548,7 +575,7 @@ generate/load female uniform sprites matching all previously decided variables
 
 	var/mutable_appearance/standing
 	if(femaleuniform)
-		standing = wear_female_version(t_state, file2use, layer2use, femaleuniform) //should layer2use be in sync with the adjusted value below? needs testing - shiz
+		standing = wear_female_version(t_state, file2use, layer2use, femaleuniform, greyscale_colors) //should layer2use be in sync with the adjusted value below? needs testing - shiz
 	if(!standing)
 		standing = mutable_appearance(file2use, t_state, -layer2use)
 
@@ -618,6 +645,10 @@ generate/load female uniform sprites matching all previously decided variables
 	for(var/X in bodyparts)
 		var/obj/item/bodypart/BP = X
 		. += "-[BP.body_zone]"
+		if(!HAS_TRAIT(src, TRAIT_INVISIBLE_MAN))
+			for(var/obj/item/organ/external/organ as anything in BP.external_organs)
+				if(organ.can_draw_on_bodypart(src)) //make sure we're drawn before generating a key
+					. += "([organ.cache_key])"
 		//SKYRAT EDIT REMOVAL BEGIN - CUSTOMIZATION
 		/*
 		if(BP.status == BODYPART_ORGANIC)
@@ -641,6 +672,9 @@ generate/load female uniform sprites matching all previously decided variables
 
 	if(HAS_TRAIT(src, TRAIT_HUSK))
 		. += "-husk"
+
+	if(HAS_TRAIT(src, TRAIT_INVISIBLE_MAN))
+		. += "-invisible"
 
 /mob/living/carbon/human/load_limb_from_cache()
 	..()
@@ -700,11 +734,20 @@ generate/load female uniform sprites matching all previously decided variables
 			else
 				eye_overlay = mutable_appearance('icons/mob/human_face.dmi', E.eye_icon_state, -BODY_LAYER)
 			if((EYECOLOR in dna.species.species_traits) && E)
-				eye_overlay.color = "#" + eye_color
+				eye_overlay.color = eye_color
 			if(OFFSET_FACE in dna.species.offset_features)
 				eye_overlay.pixel_x += dna.species.offset_features[OFFSET_FACE][1]
 				eye_overlay.pixel_y += dna.species.offset_features[OFFSET_FACE][2]
 			add_overlay(eye_overlay)
+			//SKYRAT EDIT ADDITION
+			if (E && E.is_emissive)
+				var/mutable_appearance/emissive_appearance = emissive_appearance('icons/mob/human_face.dmi', E ? E.eye_icon_state : "eyes_missing", -BODY_LAYER)
+				emissive_appearance.appearance_flags &= ~RESET_TRANSFORM
+				if(OFFSET_FACE in dna.species.offset_features)
+					emissive_appearance.pixel_x += dna.species.offset_features[OFFSET_FACE][1]
+					emissive_appearance.pixel_y += dna.species.offset_features[OFFSET_FACE][2]
+				add_overlay(emissive_appearance)
+			//SKYRAT EDIT END
 
 	dna.species.handle_hair(src)
 

@@ -133,6 +133,7 @@
 				total_reagents -= burn_rate
 
 	my_turf.hotspot_expose((T20C+50) + (50*fire_state), 125)
+	my_turf.PolluteListTurf(list(/datum/pollutant/smoke = 15, /datum/pollutant/carbon_air_pollution = 5), POLLUTION_ACTIVE_EMITTER_CAP)
 	for(var/A in my_turf.contents)
 		var/atom/AT = A
 		if(!QDELETED(AT))
@@ -378,7 +379,7 @@
 							if(!(C.shoes && C.shoes.clothing_flags & NOSLIP))
 								step(C, dir)
 								if(prob(60) && C.body_position != LYING_DOWN)
-									to_chat(C, "<span class='userdanger'>The current knocks you down!</span>")
+									to_chat(C, span_userdanger("The current knocks you down!"))
 									C.Paralyze(60)
 						else
 							step(AM, dir)
@@ -418,7 +419,7 @@
 		if(iscarbon(M))
 			var/mob/living/carbon/C = M
 			if(C.wear_mask && C.wear_mask.flags_cover & MASKCOVERSMOUTH)
-				to_chat(C, "<span class='userdanger'>You fall in the water!</span>")
+				to_chat(C, span_userdanger("You fall in the water!"))
 			else
 				var/datum/reagents/tempr = take_reagents_flat(CHOKE_REAGENTS_INGEST_ON_FALL_AMOUNT)
 				tempr.trans_to(C, tempr.total_volume, methods = INGEST)
@@ -426,14 +427,14 @@
 				C.adjustOxyLoss(5)
 				//C.emote("cough")
 				INVOKE_ASYNC(C, /mob.proc/emote, "cough")
-				to_chat(C, "<span class='userdanger'>You fall in and swallow some water!</span>")
+				to_chat(C, span_userdanger("You fall in and swallow some water!"))
 		else
-			to_chat(M, "<span class='userdanger'>You fall in the water!</span>")
+			to_chat(M, span_userdanger("You fall in the water!"))
 
 /obj/effect/abstract/liquid_turf/Initialize()
+	. = ..()
 	if(!SSliquids)
 		CRASH("Liquid Turf created with the liquids sybsystem not yet initialized!")
-	. = ..()
 	if(!immutable)
 		my_turf = loc
 		RegisterSignal(my_turf, COMSIG_ATOM_ENTERED, .proc/movable_entered)
@@ -443,9 +444,9 @@
 		SEND_SIGNAL(my_turf, COMSIG_TURF_LIQUIDS_CREATION, src)
 
 	update_liquid_vis()
-
-	QUEUE_SMOOTH(src)
-	QUEUE_SMOOTH_NEIGHBORS(src)
+	if(z)
+		QUEUE_SMOOTH(src)
+		QUEUE_SMOOTH_NEIGHBORS(src)
 
 	/* //Cant do it immediately, hmhm
 	if(isspaceturf(my_turf))
@@ -541,7 +542,7 @@
 	starting_temp = T20C+20
 
 /obj/effect/abstract/liquid_turf/immutable/Initialize()
-	..()
+	. = ..()
 	reagent_list = starting_mixture.Copy()
 	total_reagents = 0
 	for(var/key in reagent_list)

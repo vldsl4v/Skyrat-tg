@@ -16,7 +16,10 @@
 	///Do we use the large steam sprite?
 	var/use_large_steam_sprite = FALSE
 
-/datum/component/grillable/Initialize(cook_result, required_cook_time, positive_result, use_large_steam_sprite)
+	/// What type of pollutant we spread around as we are grilleed, can be none  // SKYRAT EDIT ADDITION
+	var/pollutant_type // SKYRAT EDIT ADDITION
+
+/datum/component/grillable/Initialize(cook_result, required_cook_time, positive_result, use_large_steam_sprite, pollutant_type) //SKYRAT EDIT CHANGE
 	. = ..()
 	if(!isitem(parent)) //Only items support grilling at the moment
 		return COMPONENT_INCOMPATIBLE
@@ -25,6 +28,7 @@
 	src.required_cook_time = required_cook_time
 	src.positive_result = positive_result
 	src.use_large_steam_sprite = use_large_steam_sprite
+	src.pollutant_type = pollutant_type //SKYRAT EDIT ADDITION
 
 	RegisterSignal(parent, COMSIG_ITEM_GRILLED, .proc/OnGrill)
 	RegisterSignal(parent, COMSIG_PARENT_EXAMINE, .proc/OnExamine)
@@ -47,6 +51,11 @@
 	SIGNAL_HANDLER
 
 	. = COMPONENT_HANDLED_GRILLING
+	//SKYRAT EDIT ADDITION
+	if(pollutant_type)
+		var/turf/parent_turf = get_turf(parent)
+		parent_turf.PolluteTurf(pollutant_type, 10)
+	//SKYRAT EDIT END
 
 	current_cook_time += delta_time * 10 //turn it into ds
 	if(current_cook_time >= required_cook_time)
@@ -68,6 +77,18 @@
 /datum/component/grillable/proc/FinishGrilling(atom/grill_source)
 
 	var/atom/original_object = parent
+
+	if(istype(parent, /obj/item/stack)) //Check if its a sheet, for grilling multiple things in a stack
+		var/obj/item/stack/itemstack = original_object
+		var/atom/grilled_result = new cook_result(original_object.loc, itemstack.amount)
+		SEND_SIGNAL(parent, COMSIG_GRILL_COMPLETED, grilled_result)
+		currently_grilling = FALSE
+		grill_source.visible_message("<span class='[positive_result ? "notice" : "warning"]'>[parent] turns into \a [grilled_result]!</span>")
+		grilled_result.pixel_x = original_object.pixel_x
+		grilled_result.pixel_y = original_object.pixel_y	
+		qdel(parent)
+		return
+
 	var/atom/grilled_result = new cook_result(original_object.loc)
 
 	if(original_object.custom_materials)
@@ -76,6 +97,7 @@
 	grilled_result.pixel_x = original_object.pixel_x
 	grilled_result.pixel_y = original_object.pixel_y
 
+	
 	grill_source.visible_message("<span class='[positive_result ? "notice" : "warning"]'>[parent] turns into \a [grilled_result]!</span>")
 	SEND_SIGNAL(parent, COMSIG_GRILL_COMPLETED, grilled_result)
 	currently_grilling = FALSE

@@ -64,6 +64,8 @@
 	//SKYRAT EDIT ADDITION BEGIN - EMOTES
 	var/sound_volume = 25 //Emote volume
 	var/list/allowed_species
+	/// Are silicons explicitely allowed to use this emote?
+	var/silicon_allowed = FALSE
 	//SKYRAT EDIT ADDITION END
 
 /datum/emote/New()
@@ -101,19 +103,17 @@
 
 	msg = replace_pronoun(user, msg)
 
-	if(isliving(user))
-		var/mob/living/sender = user
-		for(var/obj/item/implant/implant in sender.implants)
-			implant.trigger(key, sender)
-
 	if(!msg)
 		return
 
 	user.log_message(msg, LOG_EMOTE)
-	var/dchatmsg = "<b>[user]</b> [msg]"
+	// SKYRAT EDIT START - Better emotes - Original: var/dchatmsg = "<b>[user]</b> [msg]"
+	var/space = should_have_space_before_emote(html_decode(msg)[1]) ? " " : ""
+	var/dchatmsg = "<b>[user]</b>[space][msg]"
+	// SKYRAT EDIT END
 
 	var/tmp_sound = get_sound(user)
-	if(tmp_sound && (!only_forced_audio || !intentional) && !TIMER_COOLDOWN_CHECK(user, type))
+	if(tmp_sound && should_play_sound(user, intentional) && !TIMER_COOLDOWN_CHECK(user, type))
 		TIMER_COOLDOWN_START(user, type, audio_cooldown)
 		//SKYRAT EDIT CHANGE BEGIN
 		//playsound(user, tmp_sound, 50, vary) - SKYRAT EDIT - ORIGINAL
@@ -121,28 +121,26 @@
 		//SKYRAT EDIT CHANGE END
 
 	var/user_turf = get_turf(user)
-	for(var/mob/ghost in GLOB.dead_mob_list)
-		if(!ghost.client || isnewplayer(ghost))
-			continue
-		if(ghost.stat == DEAD && ghost.client && user.client && (ghost.client.prefs.chat_toggles & CHAT_GHOSTSIGHT) && !(ghost in viewers(user_turf, null)))
-			ghost.show_message("<span class='emote'>[FOLLOW_LINK(ghost, user)] [dchatmsg]</span>")
+	if (user.client)
+		for(var/mob/ghost as anything in GLOB.dead_mob_list)
+			if(!ghost.client || isnewplayer(ghost))
+				continue
+			if(ghost.client.prefs.chat_toggles & CHAT_GHOSTSIGHT && !(ghost in viewers(user_turf, null)))
+				ghost.show_message("<span class='emote'>[FOLLOW_LINK(ghost, user)] [dchatmsg]</span>")
 
 	//SKYRAT EDIT ADDITION BEGIN - AI QoL
-	for(var/mob/ai in GLOB.ai_list)
-		//ai.show_message("<span class='emote'>[!(ai.stat == DEAD)]</span>")
-		var/aiEye_turf
-		for(var/mob/camera/ai_eye/AI_eye as anything in GLOB.aiEyes)
-			aiEye_turf = get_turf(AI_eye)
-		if(!ai.client)
-			continue
-		if(!(ai.stat == DEAD) && ai.client && (get_dist(user_turf, aiEye_turf)<8))
+	for(var/mob/living/silicon/ai/ai as anything in GLOB.ai_list)
+		var/ai_eye_turf = get_turf(ai.eyeobj)
+		if(ai.client && !(ai.stat == DEAD) && (get_dist(user_turf, ai_eye_turf)<8))
 			ai.show_message("<span class='emote'>[dchatmsg]</span>")
 	//SKYRAT EDIT ADDITION END - AI QoL
 
 	if(emote_type == EMOTE_AUDIBLE)
-		user.audible_message(msg, deaf_message = "<span class='emote'>You see how <b>[user]</b> [msg]</span>", audible_message_flags = EMOTE_MESSAGE)
+		user.audible_message(msg, deaf_message = "<span class='emote'>You see how <b>[user]</b>[space][msg]</span>", audible_message_flags = EMOTE_MESSAGE, separation = space) // SKYRAT EDIT ADDITION - Original: user.audible_message(msg, deaf_message = "<span class='emote'>You see how <b>[user]</b> [msg]</span>", audible_message_flags = EMOTE_MESSAGE)
 	else
-		user.visible_message(msg, blind_message = "<span class='emote'>You hear how <b>[user]</b> [msg]</span>", visible_message_flags = EMOTE_MESSAGE)
+		user.visible_message(msg, blind_message = "<span class='emote'>You hear how <b>[user]</b>[space][msg]</span>", visible_message_flags = EMOTE_MESSAGE, separation = space) // SKYRAT EDIT ADDITION - Original: user.visible_message(msg, blind_message = "<span class='emote'>You hear how <b>[user]</b> [msg]</span>", visible_message_flags = EMOTE_MESSAGE)
+
+	SEND_SIGNAL(user, COMSIG_MOB_EMOTED(key))
 
 /**
  * For handling emote cooldown, return true to allow the emote to happen.
@@ -161,7 +159,7 @@
 	if(user.nextsoundemote > world.time)
 		var/datum/emote/default_emote = /datum/emote
 		if(cooldown > initial(default_emote.cooldown)) // only worry about longer-than-normal emotes
-			to_chat(user, span_danger("You must wait another [DisplayTimeText(user.emotes_used[src] - world.time + cooldown)] before using that emote."))
+			to_chat(user, span_danger("You must wait another [DisplayTimeText(user.nextsoundemote - world.time)] before using that emote."))
 		return FALSE
 	//if(!user.emotes_used)
 	//	user.emotes_used = list()
@@ -284,12 +282,28 @@
 	//SKYRAT EDIT BEGIN
 	if(allowed_species)
 		var/check = FALSE
+		if(silicon_allowed && issilicon(user))
+			check = TRUE
 		if(ishuman(user))
 			var/mob/living/carbon/human/sender = user
 			if(sender.dna.species.type in allowed_species)
 				check = TRUE
 		return check
 	//SKYRAT EDIT END
+
+/**
+ * Check to see if the user should play a sound when performing the emote.
+ *
+ * Arguments:
+ * * user - Person that is doing the emote.
+ * * intentional - Bool that says whether the emote was forced (FALSE) or not (TRUE).
+ *
+ * Returns a bool about whether or not the user should play a sound when performing the emote.
+ */
+/datum/emote/proc/should_play_sound(mob/user, intentional = FALSE)
+	if(only_forced_audio && intentional)
+		return FALSE
+	return TRUE
 
 /**
 * Allows the intrepid coder to send a basic emote
@@ -313,10 +327,11 @@
 	var/ghost_text = "<b>[src]</b> [text]"
 
 	var/origin_turf = get_turf(src)
-	for(var/mob/ghost in GLOB.dead_mob_list)
-		if(!ghost.client || isnewplayer(ghost))
-			continue
-		if(ghost.stat == DEAD && ghost.client && (ghost.client.prefs.chat_toggles & CHAT_GHOSTSIGHT) && !(ghost in viewers(origin_turf, null)))
-			ghost.show_message("[FOLLOW_LINK(ghost, src)] [ghost_text]")
+	if(client)
+		for(var/mob/ghost as anything in GLOB.dead_mob_list)
+			if(!ghost.client || isnewplayer(ghost))
+				continue
+			if(ghost.client.prefs.chat_toggles & CHAT_GHOSTSIGHT && !(ghost in viewers(origin_turf, null)))
+				ghost.show_message("[FOLLOW_LINK(ghost, src)] [ghost_text]")
 
 	visible_message(text, visible_message_flags = EMOTE_MESSAGE)

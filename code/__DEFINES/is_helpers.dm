@@ -7,6 +7,8 @@
 
 #define isatom(A) (isloc(A))
 
+#define isdatum(thing) (istype(thing, /datum))
+
 #define isweakref(D) (istype(D, /datum/weakref))
 
 //Turfs
@@ -69,10 +71,6 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 #define iszombie(A) (is_species(A, /datum/species/zombie))
 #define isskeleton(A) (is_species(A, /datum/species/skeleton))
 #define ismoth(A) (is_species(A, /datum/species/moth))
-//SKYRAT add
-#define isinsect(A) (is_species(A, /datum/species/insect))
-//SKYRAT add
-#define ishumanbasic(A) (is_species(A, /datum/species/human))
 #define isfelinid(A) (is_species(A, /datum/species/human/felinid))
 #define isethereal(A) (is_species(A, /datum/species/ethereal))
 #define isvampire(A) (is_species(A,/datum/species/vampire))
@@ -107,6 +105,12 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define ispAI(A) (istype(A, /mob/living/silicon/pai))
 
+// basic mobs
+#define isbasicmob(A) (istype(A, /mob/living/basic))
+
+/// returns whether or not the atom is either a basic mob OR simple animal
+#define isanimal_or_basicmob(A) (istype(A, /mob/living/simple_animal) || istype(A, /mob/living/basic))
+
 //Simple animals
 #define isanimal(A) (istype(A, /mob/living/simple_animal))
 
@@ -118,7 +122,7 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define ismouse(A) (istype(A, /mob/living/simple_animal/mouse))
 
-#define iscow(A) (istype(A, /mob/living/simple_animal/cow))
+#define iscow(A) (istype(A, /mob/living/basic/cow))
 
 #define isslime(A) (istype(A, /mob/living/simple_animal/slime))
 
@@ -135,8 +139,6 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 #define israt(A) (istype(A, /mob/living/simple_animal/hostile/rat))
 
 #define isregalrat(A) (istype(A, /mob/living/simple_animal/hostile/regalrat))
-
-#define isswarmer(A) (istype(A, /mob/living/simple_animal/hostile/swarmer))
 
 #define isguardian(A) (istype(A, /mob/living/simple_animal/hostile/guardian))
 
@@ -189,7 +191,7 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define ismedicalmecha(A) (istype(A, /obj/vehicle/sealed/mecha/medical))
 
-#define ismopable(A) (A && (A.layer <= HIGH_SIGIL_LAYER)) //If something can be cleaned by floor-cleaning devices such as mops or clean bots
+#define ismopable(A) (A && (A.layer <= FLOOR_CLEAN_LAYER)) //If something can be cleaned by floor-cleaning devices such as mops or clean bots
 
 #define isorgan(A) (istype(A, /obj/item/organ))
 
@@ -242,6 +244,7 @@ GLOBAL_LIST_INIT(book_types, typecacheof(list(
 
 
 // Jobs
+#define is_job(job_type)  (istype(job_type, /datum/job))
 #define is_assistant_job(job_type) (istype(job_type, /datum/job/assistant))
 #define is_bartender_job(job_type) (istype(job_type, /datum/job/bartender))
 #define is_captain_job(job_type) (istype(job_type, /datum/job/captain))

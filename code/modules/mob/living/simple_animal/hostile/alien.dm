@@ -23,7 +23,7 @@
 	combat_mode = TRUE
 	attack_sound = 'sound/weapons/bladeslice.ogg'
 	attack_vis_effect = ATTACK_EFFECT_CLAW
-	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_tox" = 0, "max_tox" = 0, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
+	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_plas" = 0, "max_plas" = 0, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
 	faction = list(ROLE_ALIEN)
 	status_flags = CANPUSH
 	minbodytemp = 0
@@ -83,7 +83,7 @@
 	ranged = 1
 	retreat_distance = 5
 	minimum_distance = 5
-	move_to_delay = 4
+	move_to_delay = 2
 	butcher_results = list(/obj/item/food/meat/slab/xeno = 4,
 							/obj/item/stack/sheet/animalhide/xeno = 1)
 	projectiletype = /obj/projectile/neurotox
@@ -132,7 +132,7 @@
 	icon_dead = "alienq_dead"
 	health_doll_icon = "alienq"
 	bubble_icon = "alienroyal"
-	move_to_delay = 4
+	move_to_delay = 2
 	maxHealth = 400
 	health = 400
 	butcher_results = list(/obj/item/food/meat/slab/xeno = 10,

@@ -10,14 +10,14 @@
 	speak_emote = list("warbles", "quavers")
 	emote_hear = list("trills.")
 	emote_see = list("sniffs.", "burps.")
-	weather_immunities = list(WEATHER_LAVA, WEATHER_ASH)
+	weather_immunities = list(TRAIT_LAVA_IMMUNE, TRAIT_ASHSTORM_IMMUNE)
 	faction = list("mining", "ashwalker")
 	density = FALSE
 	speak_chance = 1
 	turns_per_move = 8
 	obj_damage = 0
 	environment_smash = ENVIRONMENT_SMASH_NONE
-	move_to_delay = 15
+	move_to_delay = 7.5
 	response_help_continuous = "pets"
 	response_help_simple = "pet"
 	response_disarm_continuous = "gently pushes aside"
@@ -44,10 +44,10 @@
 
 	wanted_objects = list(/obj/effect/decal/cleanable/xenoblood/xgibs, /obj/effect/decal/cleanable/blood/gibs/, /obj/item/organ)
 
-/mob/living/simple_animal/hostile/asteroid/gutlunch/Initialize()
+/mob/living/simple_animal/hostile/asteroid/gutlunch/Initialize(mapload)
 	. = ..()
 	if(wanted_objects.len)
-		AddComponent(/datum/component/udder, /obj/item/udder/gutlunch, /mob.proc/regenerate_icons, /mob.proc/regenerate_icons)
+		AddComponent(/datum/component/udder, /obj/item/udder/gutlunch, CALLBACK(src, .proc/regenerate_icons), CALLBACK(src, .proc/regenerate_icons))
 	ADD_TRAIT(src, TRAIT_VENTCRAWLER_ALWAYS, INNATE_TRAIT)
 
 /mob/living/simple_animal/hostile/asteroid/gutlunch/CanAttack(atom/the_target) // Gutlunch-specific version of CanAttack to handle stupid stat_exclusive = true crap so we don't have to do it for literally every single simple_animal/hostile except the two that spawn in lavaland
@@ -86,7 +86,7 @@
 	name = "gubbuck"
 	gender = MALE
 
-/mob/living/simple_animal/hostile/asteroid/gutlunch/gubbuck/Initialize()
+/mob/living/simple_animal/hostile/asteroid/gutlunch/gubbuck/Initialize(mapload)
 	. = ..()
 	add_atom_colour(pick("#E39FBB", "#D97D64", "#CF8C4A"), FIXED_COLOUR_PRIORITY)
 	resize = 0.85
@@ -104,7 +104,7 @@
 	var/growth = 0
 
 //Baby gutlunch
-/mob/living/simple_animal/hostile/asteroid/gutlunch/grublunch/Initialize()
+/mob/living/simple_animal/hostile/asteroid/gutlunch/grublunch/Initialize(mapload)
 	. = ..()
 	add_atom_colour("#9E9E9E", FIXED_COLOUR_PRIORITY) //Somewhat hidden
 	resize = 0.45

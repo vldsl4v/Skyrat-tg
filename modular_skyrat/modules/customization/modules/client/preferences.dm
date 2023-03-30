@@ -1,3 +1,4 @@
+/*
 GLOBAL_LIST_EMPTY(preferences_datums)
 
 // i shall taint your pretty preferences file with bobcode
@@ -46,7 +47,7 @@ GLOBAL_LIST_INIT(food, list(
 	var/tmp/old_be_special = 0 //Bitflag version of be_special, used to update old savefiles and nothing more
 										//If it's 0, that's good, if it's anything but 0, the owner of this prefs file's antag choices were,
 										//autocorrected this round, not that you'd need to check that.
-	var/be_antag = TRUE //Does this player wish to be an antag this round?
+	var/be_antag = FALSE //Does this player wish to be an antag this round?
 
 	var/UI_style = null
 	var/buttons_locked = FALSE
@@ -220,6 +221,7 @@ GLOBAL_LIST_INIT(food, list(
 	var/erp_pref = "Ask"
 	var/noncon_pref = "Ask"
 	var/vore_pref = "Ask"
+	var/sextoys_pref = "No"
 
 	//BACKGROUND STUFF
 	var/general_record = ""
@@ -295,7 +297,7 @@ GLOBAL_LIST_INIT(food, list(
 				message_admins("[usr] is bypassing the flavor text requirements.")
 				return TRUE
 		if(inform_client)
-			to_chat(parent, "<span class='userdanger'>You must have a flavor text!</span>")
+			to_chat(parent, span_userdanger("You must have a flavor text!"))
 		return FALSE
 	if(length(replacetext(features["flavor_text"], " ", "")) < FLAVORTEXT_JOIN_MINIMUM) // No you can't use whitespace to meet the requirement
 		if(check_rights(R_ADMIN, FALSE))
@@ -304,7 +306,7 @@ GLOBAL_LIST_INIT(food, list(
 				message_admins("[usr] is bypassing the flavor text requirements.")
 				return TRUE
 		if(inform_client)
-			to_chat(parent, "<span class='userdanger'>Your flavor text must be longer than [FLAVORTEXT_JOIN_MINIMUM] characters!</span>")
+			to_chat(parent, span_userdanger("Your flavor text must be longer than [FLAVORTEXT_JOIN_MINIMUM] characters!"))
 		return FALSE
 	return TRUE
 
@@ -516,6 +518,7 @@ GLOBAL_LIST_INIT(food, list(
 					dat += 	"<b>ERP:</b><a href='?_src_=prefs;preference=erp_pref;task=input'>[erp_pref]</a> "
 					dat += 	"<b>Non-Con:</b><a href='?_src_=prefs;preference=noncon_pref;task=input'>[noncon_pref]</a> "
 					dat += 	"<b>Vore:</b><a href='?_src_=prefs;preference=vore_pref;task=input'>[vore_pref]</a><br>"
+					dat += 	"<b>Sex toys usage:</b><a href='?_src_=prefs;preference=sextoys_pref;task=input'>[sextoys_pref]</a><br>"
 					dat += "<a href='?_src_=prefs;preference=ooc_prefs;task=input'><b>Set OOC prefs</b></a><br>"
 					if(length(ooc_prefs) <= 40)
 						if(!length(ooc_prefs))
@@ -1206,6 +1209,13 @@ GLOBAL_LIST_INIT(food, list(
 			dat += "<b>Be Able To Get Covered In \"Reproductive Reagent\":</b> <a href='?_src_=prefs;preference=cumfaced_pref'>[(skyrat_toggles & CUMFACE_PREF) ? "Enabled":"Disabled"]</a><br>"
 			dat += "<br>"
 
+			//erp update prefs here
+			dat += "<b>Bimbofication:</b> <a href='?_src_=prefs;preference=bimbo_pref'>[(skyrat_toggles & BIMBO_PREF) ? "Enabled":"Disabled"]</a><br>"
+			dat += "<b>Breast enlargement chemicals:</b> <a href='?_src_=prefs;preference=b_enlargement_pref'>[(skyrat_toggles & BREAST_ENLARGEMENT) ? "Enabled":"Disabled"]</a><br>"
+			dat += "<b>Penis enlargement chemicals:</b> <a href='?_src_=prefs;preference=p_enlargement_pref'>[(skyrat_toggles & PENIS_ENLARGEMENT) ? "Enabled":"Disabled"]</a><br>"
+			dat += "<b>Forced masculinity:</b> <a href='?_src_=prefs;preference=forced_m_pref'>[(skyrat_toggles & FORCED_MALE) ? "Enabled":"Disabled"]</a><br>"
+			dat += "<b>Forced femininity:</b> <a href='?_src_=prefs;preference=forced_fem_pref'>[(skyrat_toggles & FORCED_FEM) ? "Enabled":"Disabled"]</a><br>"
+			dat += "<br>"
 
 			if(user.client)
 				if(unlock_content)
@@ -1439,7 +1449,7 @@ GLOBAL_LIST_INIT(food, list(
 			if(job.alt_titles.len)
 				rank_title_line = "<a href='?_src_=prefs;preference=job;task=alt_title;job_title=[job.title]'>[rank_title_line]</a>"
 			else
-				rank_title_line = "<span class='dark'>[rank_title_line]</span>" //Make it dark if we're not adding a button for alt titles
+				rank_title_line = span_dark("[rank_title_line]") //Make it dark if we're not adding a button for alt titles
 			HTML += rank_title_line
 
 
@@ -1729,7 +1739,7 @@ GLOBAL_LIST_INIT(food, list(
 						to_chat(user, span_warning("You can't have more than [MAX_QUIRKS] positive quirks!"))
 						return
 					if(balance - value < 0)
-						to_chat(user, "<span class='warning'>You don't have enough balance to gain this quirk!</span>")
+						to_chat(user, span_warning("You don't have enough balance to gain this quirk!"))
 						return
 					all_quirks += quirk
 				SetQuirks(user)
@@ -2145,42 +2155,42 @@ GLOBAL_LIST_INIT(food, list(
 				if("flavor_text")
 					var/msg = input(usr, "Set the flavor text in your 'examine' verb. This is for describing what people can tell by looking at your character.", "Flavor Text", features["flavor_text"]) as message|null //Skyrat edit, removed stripped_multiline_input()
 					if(!isnull(msg))
-						features["flavor_text"] = strip_html_simple(msg, MAX_FLAVOR_LEN, TRUE)
+						features["flavor_text"] = STRIP_HTML_SIMPLE(msg, MAX_FLAVOR_LEN)
 
 				if("silicon_flavor_text")
 					var/msg = input(usr, "Set the flavor text in your 'examine' verb. This is for describing what people can tell by looking at your character.", "Silicon Flavor Text", features["silicon_flavor_text"]) as message|null
 					if(!isnull(msg))
-						features["silicon_flavor_text"] = strip_html_simple(msg, MAX_FLAVOR_LEN, TRUE)
+						features["silicon_flavor_text"] = STRIP_HTML_SIMPLE(msg, MAX_FLAVOR_LEN)
 
 				if("ooc_prefs")
 					var/msg = input(usr, "Set your OOC preferences.", "OOC Prefs", ooc_prefs) as message|null
 					if(!isnull(msg))
-						ooc_prefs = strip_html_simple(msg, MAX_FLAVOR_LEN, TRUE)
+						ooc_prefs = STRIP_HTML_SIMPLE(msg, MAX_FLAVOR_LEN)
 
 				if("general_record")
 					var/msg = input(usr, "Set your general record. This is more or less public information, available from security, medical and command consoles", "General Record", general_record) as message|null
 					if(!isnull(msg))
-						general_record = strip_html_simple(msg, MAX_FLAVOR_LEN, TRUE)
+						general_record = STRIP_HTML_SIMPLE(msg, MAX_FLAVOR_LEN)
 
 				if("medical_record")
 					var/msg = input(usr, "Set your medical record. ", "Medical Record", medical_record) as message|null
 					if(!isnull(msg))
-						medical_record = strip_html_simple(msg, MAX_FLAVOR_LEN, TRUE)
+						medical_record = STRIP_HTML_SIMPLE(msg, MAX_FLAVOR_LEN)
 
 				if("security_record")
 					var/msg = input(usr, "Set your security record. ", "Medical Record", security_record) as message|null
 					if(!isnull(msg))
-						security_record = strip_html_simple(msg, MAX_FLAVOR_LEN, TRUE)
+						security_record = STRIP_HTML_SIMPLE(msg, MAX_FLAVOR_LEN)
 
 				if("background_info")
 					var/msg = input(usr, "Set your background information. (Where you come from, which culture were you raised in and why you are working here etc.)", "Background Info", background_info) as message|null
 					if(!isnull(msg))
-						background_info = strip_html_simple(msg, MAX_FLAVOR_LEN, TRUE)
+						background_info = STRIP_HTML_SIMPLE(msg, MAX_FLAVOR_LEN)
 
 				if("exploitable_info")
 					var/msg = input(usr, "Set your exploitable information. This is sensitive informations that antagonists may get to see, recommended for better roleplay experience", "Exploitable Info", exploitable_info) as message|null
 					if(!isnull(msg))
-						exploitable_info = strip_html_simple(msg, MAX_FLAVOR_LEN, TRUE)
+						exploitable_info = STRIP_HTML_SIMPLE(msg, MAX_FLAVOR_LEN)
 
 				if("uses_skintones")
 					needs_update = TRUE
@@ -2210,6 +2220,43 @@ GLOBAL_LIST_INIT(food, list(
 							vore_pref = "No"
 						if("No")
 							vore_pref = "Yes"
+				//SKYRAT EDIT ADDITION BEGIN - ERP_SLOT_SYSTEM
+				if("sextoys_pref")
+					// User changed state of ERP pref
+					var/mob/living/carbon/human/M = user
+					switch(sextoys_pref)
+						if("No")
+							sextoys_pref = "Yes"
+							// User set ERP pref to "Yes", make the ERP button of the inventory visible and interactive again
+							if(user.hud_used)
+								for(var/atom/movable/screen/human/erp_toggle/E in user.hud_used.static_inventory)
+									if(istype(E, /atom/movable/screen/human/erp_toggle))
+										E.invisibility = 0
+						// Perform standard inventory updates
+						if("Yes")
+							sextoys_pref = "No"
+							if(ishuman(user))
+								// The user has set the ERP pref to a value other than "Yes", now we drop all items from ERP slots and can't use them
+								if(M.vagina != null)
+									M.dropItemToGround(M.vagina, TRUE, M.loc, TRUE, FALSE, TRUE)
+								if(M.anus != null)
+									M.dropItemToGround(M.anus, TRUE, M.loc, TRUE, FALSE, TRUE)
+								if(M.nipples != null)
+									M.dropItemToGround(M.nipples, TRUE, M.loc, TRUE, FALSE, TRUE)
+								if(M.penis != null)
+									M.dropItemToGround(M.penis, TRUE, M.loc, TRUE, FALSE, TRUE)
+							// If the user has an inventory of the ERP open, then we will hide it
+							if(user.hud_used)
+								if(user.hud_used.ERP_inventory_shown)
+									user.hud_used.ERP_inventory_shown = FALSE
+									user.client.screen -= user.hud_used.erp_toggleable_inventory
+								// Find the ERP button of the inventory and make it invisible so that the user cannot interact with it
+								for(var/atom/movable/screen/human/erp_toggle/E in user.hud_used.static_inventory)
+									if(istype(E, /atom/movable/screen/human/erp_toggle))
+										E.invisibility = 100
+								user.hud_used.hidden_inventory_update(user)
+								user.hud_used.persistent_inventory_update(user)
+				//SKYRAT EDIT ADDITION END
 
 				if("change_arousal_preview")
 					var/list/gen_arous_trans = list("Not aroused" = AROUSAL_NONE,
@@ -2612,7 +2659,7 @@ GLOBAL_LIST_INIT(food, list(
 							friendlyname += " (disabled)"
 						maplist[friendlyname] = VM.map_name
 					maplist[default] = null
-					var/pickedmap = input(user, "Choose your preferred map. This will be used to help weight random map selection.", "Character Preference")  as null|anything in sortList(maplist)
+					var/pickedmap = input(user, "Choose your preferred map. This will be used to help weight random map selection.", "Character Preference")  as null|anything in sort_list(maplist)
 					if (pickedmap)
 						preferred_map = maplist[pickedmap]
 
@@ -2622,7 +2669,7 @@ GLOBAL_LIST_INIT(food, list(
 						clientfps = sanitize_integer(desiredfps, -1, 1000, clientfps)
 						parent.fps = (clientfps < 0) ? RECOMMENDED_FPS : clientfps
 				if("ui")
-					var/pickedui = input(user, "Choose your UI style.", "Character Preference", UI_style)  as null|anything in sortList(GLOB.available_ui_styles)
+					var/pickedui = input(user, "Choose your UI style.", "Character Preference", UI_style)  as null|anything in sort_list(GLOB.available_ui_styles)
 					if(pickedui)
 						UI_style = pickedui
 						if (parent && parent.mob && parent.mob.hud_used)
@@ -2752,7 +2799,7 @@ GLOBAL_LIST_INIT(food, list(
 						if(!length(key_bindings[old_key]))
 							key_bindings -= old_key
 					key_bindings[full_key] += list(kb_name)
-					key_bindings[full_key] = sortList(key_bindings[full_key])
+					key_bindings[full_key] = sort_list(key_bindings[full_key])
 
 					user << browse(null, "window=capturekeypress")
 					user.client.set_macros()
@@ -2898,6 +2945,22 @@ GLOBAL_LIST_INIT(food, list(
 				if("cumfaced_pref")
 					skyrat_toggles ^= CUMFACE_PREF
 
+				//erp update prefs coming riiight here
+				if("bimbo_pref")
+					skyrat_toggles ^= BIMBO_PREF
+
+				if("b_enlargement_pref")
+					skyrat_toggles ^= BREAST_ENLARGEMENT
+
+				if("p_enlargement_pref")
+					skyrat_toggles ^= PENIS_ENLARGEMENT
+
+				if("forced_m_pref")
+					skyrat_toggles ^= FORCED_MALE
+
+				if("forced_fem_pref")
+					skyrat_toggles ^= FORCED_FEM
+
 				if("parallaxup")
 					parallax = WRAP(parallax + 1, PARALLAX_INSANE, PARALLAX_DISABLE + 1)
 					if (parent && parent.mob && parent.mob.hud_used)
@@ -2975,10 +3038,6 @@ GLOBAL_LIST_INIT(food, list(
 						save_character()
 					else
 						needs_update = TRUE
-
-					if(istype(parent.mob, /mob/dead/new_player)) //is this shitcode? probably - I DONT CAREEE~
-						var/mob/dead/new_player/NP = parent.mob
-						NP.show_titlescreen()
 
 				if("tab")
 					if (href_list["tab"])
@@ -3372,8 +3431,7 @@ GLOBAL_LIST_INIT(food, list(
 
 /datum/preferences/proc/get_linguistic_points()
 	var/points
-	points = LINGUISTIC_POINTS_DEFAULT
-	points = (TRAIT_LINGUIST in all_quirks) ? points + LINGUISTIC_POINTS_LINGUIST : points
+	points = (QUIRK_LINGUIST in all_quirks) ? LINGUISTIC_POINTS_LINGUIST : LINGUISTIC_POINTS_DEFAULT
 	for(var/langpath in languages)
 		points -= languages[langpath]
 	return points
@@ -3481,7 +3539,7 @@ GLOBAL_LIST_INIT(food, list(
 		if(language_skill && !required)
 			unlearn_button = "<a href='?_src_=prefs;lang=[lang_path];level=0;preference=language;task=input'>Unlearn</a>"
 		else
-			unlearn_button = "<span class='linkOff'>Unlearn</span>"
+			unlearn_button = span_linkOff("Unlearn")
 		var/understood_button
 		if(languages[lang_path])
 			//Has a href in case you want to downgrade from spoken to understood
@@ -3489,14 +3547,14 @@ GLOBAL_LIST_INIT(food, list(
 		else if(can_buy_language(lang_path, LANGUAGE_UNDERSTOOD))
 			understood_button = "<a href='?_src_=prefs;lang=[lang_path];level=1;preference=language;task=input'>Understood</a>"
 		else
-			understood_button = "<span class='linkOff'>Understood</span>"
+			understood_button = span_linkOff("Understood")
 		var/spoken_button
 		if(languages[lang_path] >= LANGUAGE_SPOKEN)
 			spoken_button = "<a class='linkOn' href='?_src_=prefs;lang=[lang_path];level=2;preference=language;task=input'>Spoken</a>"
 		else if(can_buy_language(lang_path, LANGUAGE_SPOKEN))
 			spoken_button = "<a href='?_src_=prefs;lang=[lang_path];level=2;preference=language;task=input'>Spoken</a>"
 		else
-			spoken_button = "<span class='linkOff'>Spoken</span>"
+			spoken_button = span_linkOff("Spoken")
 		dat += "<tr style='background-color: [background_cl]'>"
 		dat += "<td><b>[initial(lang_datum.name)]</b></td>"
 		dat += "<td><i>[initial(lang_datum.desc)]</i></td>"
@@ -3509,3 +3567,4 @@ GLOBAL_LIST_INIT(food, list(
 	popup.set_window_options("can_close=0")
 	popup.set_content(dat.Join())
 	popup.open(FALSE)
+*/

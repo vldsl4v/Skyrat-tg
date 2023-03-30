@@ -55,6 +55,7 @@ em						{font-style: normal;	font-weight: bold;}
 .blueteamradio			{color: #0000ff;}
 .greenteamradio			{color: #00ff00;}
 .yellowteamradio		{color: #d1ba22;}
+.gangradio				{color: #ac2ea1;}
 
 .yell					{					font-weight: bold;}
 
@@ -164,6 +165,31 @@ h1.alert, h2.alert		{color: #000000;}
 		50% 	{color: #00997a;}
 		60% 	{color: #ffb31a;}
 		100% 	{color: #ff33cc;}
+}
+
+.doyourjobidiot {
+  color: #c51e1e;
+  text-shadow: 0 0 4px #e22525;
+  font-size: 125%;
+  font-weight: bold;
+  animation: flashingfuckingwarning 250ms infinite;
+}
+
+@keyframes flashingfuckingwarning {
+  0% {
+    color: #c51e1e;
+    text-shadow: 0 0 4px #c51e1e;
+  }
+
+  50% {
+    color: #e22525;
+    text-shadow: 0 0 8px #e22525;
+  }
+
+  100% {
+    color: #c51e1e;
+    text-shadow: 0 0 4px #c51e1e;
+  }
 }
 // SKYRAT ADDITION END
 

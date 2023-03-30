@@ -24,11 +24,11 @@
 	speak_emote = list("creaks")
 	taunt_chance = 30
 
-	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_tox" = 0, "max_tox" = 0, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
+	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_plas" = 0, "max_plas" = 0, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
 	minbodytemp = 0
 
 	faction = list("mimic")
-	move_to_delay = 9
+	move_to_delay = 4.5
 	del_on_death = 1
 	///A cap for items in the mimic. Prevents the mimic from eating enough stuff to cause lag when opened.
 	var/storage_capacity = 50
@@ -98,7 +98,8 @@
 		O.forceMove(C)
 	..()
 
-GLOBAL_LIST_INIT(protected_objects, list(/obj/structure/table, /obj/structure/cable, /obj/structure/window))
+/// Mimics can't be made out of these objects
+GLOBAL_LIST_INIT(mimic_blacklist, list(/obj/structure/table, /obj/structure/cable, /obj/structure/window, /obj/structure/blob))
 
 /mob/living/simple_animal/hostile/mimic/copy
 	health = 100
@@ -142,7 +143,7 @@ GLOBAL_LIST_INIT(protected_objects, list(/obj/structure/table, /obj/structure/ca
 		faction |= "[REF(owner)]"
 
 /mob/living/simple_animal/hostile/mimic/copy/proc/CheckObject(obj/O)
-	if((isitem(O) || isstructure(O)) && !is_type_in_list(O, GLOB.protected_objects))
+	if((isitem(O) || isstructure(O)) && !is_type_in_list(O, GLOB.mimic_blacklist))
 		return TRUE
 	return FALSE
 
@@ -169,7 +170,7 @@ GLOBAL_LIST_INIT(protected_objects, list(/obj/structure/table, /obj/structure/ca
 			health = 15 * I.w_class
 			melee_damage_lower = 2 + I.force
 			melee_damage_upper = 2 + I.force
-			move_to_delay = 2 * I.w_class + 1
+			move_to_delay = I.w_class + 1
 		maxHealth = health
 		if(user)
 			creator = user
@@ -223,7 +224,7 @@ GLOBAL_LIST_INIT(protected_objects, list(/obj/structure/table, /obj/structure/ca
 		var/obj/item/gun/G = O
 		melee_damage_upper = G.force
 		melee_damage_lower = G.force - max(0, (G.force / 2))
-		move_to_delay = 2 * G.w_class + 1
+		move_to_delay = G.w_class + 1
 		projectilesound = G.fire_sound
 		TrueGun = G
 		if(istype(G, /obj/item/gun/magic))
@@ -296,7 +297,7 @@ GLOBAL_LIST_INIT(protected_objects, list(/obj/structure/table, /obj/structure/ca
 	var/locked = FALSE
 	var/datum/action/innate/mimic/lock/lock
 
-/mob/living/simple_animal/hostile/mimic/xenobio/Initialize()
+/mob/living/simple_animal/hostile/mimic/xenobio/Initialize(mapload)
 	. = ..()
 	lock = new
 	lock.Grant(src)

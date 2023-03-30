@@ -23,7 +23,7 @@
 	var/instability = 0 //instability the holder gets when the mutation is not native
 	var/blocks = 4 //Amount of those big blocks with gene sequences
 	var/difficulty = 8 //Amount of missing sequences. Sometimes it removes an entire pair for 2 points
-	var/timed = FALSE   //Boolean to easily check if we're going to self-destruct
+	var/timeout //Time between mutation creation and removal. If this exists, we have a timer
 	var/alias           //'Mutation #49', decided every round to get some form of distinction between undiscovered mutations
 	var/scrambled = FALSE //Wheter we can read it if it's active. To avoid cheesing with mutagen
 	var/class           //Decides player accesibility, sorta
@@ -51,7 +51,7 @@
 	class = class_
 	if(timer)
 		addtimer(CALLBACK(src, .proc/remove), timer)
-		timed = TRUE
+		timeout = timer
 	if(copymut && istype(copymut, /datum/mutation/human))
 		copy_mutation(copymut)
 	update_valid_chromosome_list()
@@ -59,6 +59,11 @@
 /datum/mutation/human/proc/on_acquiring(mob/living/carbon/human/H)
 	if(!H || !istype(H) || H.stat == DEAD || (src in H.dna.mutations))
 		return TRUE
+	//Skyrat Edit Start: Cortical Borer
+	if(H.has_borer())
+		to_chat(H, span_warning("Something inside holds dearly to your humanity!"))
+		return TRUE
+	//Skyrat Edit Stop: Cortical Borer
 	if(species_allowed && !species_allowed.Find(H.dna.species.id))
 		return TRUE
 	if(health_req && H.health < health_req)

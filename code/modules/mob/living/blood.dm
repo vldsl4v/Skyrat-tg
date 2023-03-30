@@ -13,7 +13,7 @@
 	if(bodytemperature >= TCRYO && !(HAS_TRAIT(src, TRAIT_HUSK))) //cryosleep or husked people do not pump the blood.
 
 		//Blood regeneration if there is some space
-		if(blood_volume < BLOOD_VOLUME_NORMAL && !HAS_TRAIT(src, TRAIT_NOHUNGER))
+		if(blood_volume < blood_volume_normal && !HAS_TRAIT(src, TRAIT_NOHUNGER)) //SKYRAT EDIT CHANGE
 			var/nutrition_ratio = 0
 			switch(nutrition)
 				if(0 to NUTRITION_LEVEL_STARVING)
@@ -29,7 +29,7 @@
 			if(satiety > 80)
 				nutrition_ratio *= 1.25
 			adjust_nutrition(-nutrition_ratio * HUNGER_FACTOR * delta_time)
-			blood_volume = min(blood_volume + (BLOOD_REGEN_FACTOR * nutrition_ratio * delta_time), BLOOD_VOLUME_NORMAL)
+			blood_volume = min(blood_volume + (BLOOD_REGEN_FACTOR * nutrition_ratio * delta_time), blood_volume_normal) //SKYRAT EDIT CHANGE
 
 		//Effects of bloodloss
 		var/word = pick("dizzy","woozy","faint")
@@ -44,9 +44,9 @@
 			if(BLOOD_VOLUME_OKAY to BLOOD_VOLUME_SAFE)
 				if(DT_PROB(2.5, delta_time))
 					to_chat(src, span_warning("You feel [word]."))
-				adjustOxyLoss(round(0.005 * (BLOOD_VOLUME_NORMAL - blood_volume) * delta_time, 1))
+				adjustOxyLoss(round(0.005 * (blood_volume_normal - blood_volume) * delta_time, 1)) //SKYRAT EDIT CHANGE
 			if(BLOOD_VOLUME_BAD to BLOOD_VOLUME_OKAY)
-				adjustOxyLoss(round(0.01 * (BLOOD_VOLUME_NORMAL - blood_volume) * delta_time, 1))
+				adjustOxyLoss(round(0.01 * (blood_volume_normal - blood_volume) * delta_time, 1)) //SKYRAT EDIT CHANGE
 				if(DT_PROB(2.5, delta_time))
 					blur_eyes(6)
 					to_chat(src, span_warning("You feel very [word]."))
@@ -313,6 +313,7 @@
 		var/obj/effect/decal/cleanable/blood/drip/drop = locate() in T
 		if(drop)
 			if(drop.drips < 5)
+				T.PolluteTurf(/datum/pollutant/metallic_scent, 5) //SKYRAT EDIT ADDITION
 				drop.drips++
 				drop.add_overlay(pick(drop.random_icon_states))
 				drop.transfer_mob_blood_dna(src)
@@ -321,14 +322,22 @@
 				temp_blood_DNA = drop.return_blood_DNA() //we transfer the dna from the drip to the splatter
 				qdel(drop)//the drip is replaced by a bigger splatter
 		else
+			T.PolluteTurf(/datum/pollutant/metallic_scent, 5) //SKYRAT EDIT ADDITION
 			drop = new(T, get_static_viruses())
 			drop.transfer_mob_blood_dna(src)
 			return
+
+	//SKYRAT EDIT ADDITION
+	// Create a bit of metallic pollution, as that's how blood smells
+	T.PolluteTurf(/datum/pollutant/metallic_scent, 30)
+	//SKYRAT EDIT END
 
 	// Find a blood decal or create a new one.
 	var/obj/effect/decal/cleanable/blood/B = locate() in T
 	if(!B)
 		B = new /obj/effect/decal/cleanable/blood/splatter(T, get_static_viruses())
+	if(QDELETED(B)) //Give it up
+		return
 	B.bloodiness = min((B.bloodiness + BLOOD_AMOUNT_PER_DECAL), BLOOD_POOL_MAX)
 	B.transfer_mob_blood_dna(src) //give blood info to the blood decal.
 	if(temp_blood_DNA)

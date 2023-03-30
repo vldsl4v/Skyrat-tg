@@ -7,6 +7,7 @@
 	righthand_file = 'modular_skyrat/modules/gunsgalore/icons/guns/akm/akm_righthand.dmi'
 	inhand_icon_state = "akm"
 	slot_flags = ITEM_SLOT_BELT
+	w_class = WEIGHT_CLASS_BULKY
 	mag_type = /obj/item/ammo_box/magazine/akm
 	can_suppress = FALSE
 	burst_size = 3
@@ -14,6 +15,10 @@
 	worn_icon = 'modular_skyrat/modules/gunsgalore/icons/guns/akm/akm_back.dmi'
 	worn_icon_state = "akm"
 	fire_sound = 'modular_skyrat/modules/gunsgalore/sound/guns/fire/akm/akm.ogg'
+	rack_sound = 'modular_skyrat/modules/gunsgalore/sound/guns/interact/ltrifle_cock.ogg'
+	load_sound = 'modular_skyrat/modules/gunsgalore/sound/guns/interact/ltrifle_magin.ogg'
+	load_empty_sound = 'modular_skyrat/modules/gunsgalore/sound/guns/interact/ltrifle_magin.ogg'
+	eject_sound = 'modular_skyrat/modules/gunsgalore/sound/guns/interact/ltrifle_magout.ogg'
 	alt_icons = TRUE
 	realistic = TRUE
 
@@ -26,7 +31,7 @@
 	caliber = "a762x39"
 	max_ammo = 30
 	multiple_sprites = AMMO_BOX_FULL_EMPTY
-	
+
 /obj/item/ammo_box/magazine/akm/banana
 	name = "\improper RPK magazine"
 	desc = "a banana-shaped double-stack magazine able to hold 45 rounds of 7.62x39mm Soviet ammunition. It's meant to be used on a light machine gun, but it's just a longer AK magazine."
@@ -38,7 +43,7 @@
 	multiple_sprites = AMMO_BOX_FULL_EMPTY
 
 /obj/item/gun/ballistic/automatic/assault_rifle/akm/modern
-	name = "\improper Tactical AKMS"
+	name = "\improper tactical AKMS"
 	desc = "a modernized version of the most iconic infantry rifle ever produced. This one has aftermarket parts and attachments, making it a better contender against its modern buddies. It still uses the same outdated rounds."
 	icon_state = "akm_modern"
 	inhand_icon_state = "akm"

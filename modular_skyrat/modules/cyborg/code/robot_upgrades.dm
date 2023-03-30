@@ -13,10 +13,10 @@
 	if(.)
 
 		if(borg.hasShrunk)
-			to_chat(usr, "<span class='warning'>This unit already has a shrink module installed!</span>")
+			to_chat(usr, span_warning("This unit already has a shrink module installed!"))
 			return FALSE
 		if(R_TRAIT_SMALL in borg.model.model_features)
-			to_chat(usr, "<span class='warning'>This unit's chassis cannot be shrunk any further.</span>")
+			to_chat(usr, span_warning("This unit's chassis cannot be shrunk any further."))
 			return FALSE
 
 		borg.hasShrunk = TRUE
@@ -129,10 +129,10 @@
     if(!.)
         return
     if(borg.hasAffection)
-        to_chat(usr, "<span class='warning'>This unit already has a affection module installed!</span>")
+        to_chat(usr, span_warning("This unit already has a affection module installed!"))
         return FALSE
     if(!(R_TRAIT_WIDE in borg.model.model_features))
-        to_chat(usr, "<span class='warning'>This unit's chassis does not support this module.</span>")
+        to_chat(usr, span_warning("This unit's chassis does not support this module."))
         return FALSE
 
     var/obj/item/dogborg_tongue/dogtongue = new /obj/item/dogborg_tongue(borg.model)
@@ -192,7 +192,6 @@
 		return
 	if(borgo.hasAdvanced)
 		to_chat(user, span_warning("This unit already has advanced materials installed!"))
-		to_chat(user, "There's no room for more materials!")
 		return FALSE;
 
 	var/obj/item/stack/sheet/plasteel/cyborg/plasteel_holder = new(borgo.model)
@@ -216,3 +215,32 @@
 		qdel(plasteel_energy)
 	for(var/datum/robot_energy_storage/titanium/titanium_energy in borgo.model.storages)
 		qdel(titanium_energy)
+
+// funny borg inducer upgrade
+/obj/item/borg/upgrade/inducer
+	name = "engineering cyborg inducer upgrade"
+	desc = "An inducer device for the engineering cyborg."
+	icon_state = "cyborg_upgrade3"
+	require_model = TRUE
+	model_type = list(/obj/item/robot_model/engineering, /obj/item/robot_model/saboteur)
+	model_flags = BORG_MODEL_ENGINEERING
+
+/obj/item/borg/upgrade/inducer/action(mob/living/silicon/robot/target_robot, user = usr)
+	. = ..()
+	if(.)
+
+		var/obj/item/inducer/cyborg/inducer = locate() in target_robot
+		if(inducer)
+			to_chat(user, span_warning("This unit is already equipped with an inducer module!"))
+			return FALSE
+
+		inducer = new(target_robot.model)
+		target_robot.model.basic_modules += inducer
+		target_robot.model.add_module(inducer, FALSE, TRUE)
+
+/obj/item/borg/upgrade/inducer/deactivate(mob/living/silicon/robot/target_robot, user = usr)
+	. = ..()
+	if (.)
+		var/obj/item/inducer/cyborg/inducer = locate() in target_robot.model
+		if (inducer)
+			target_robot.model.remove_module(inducer, TRUE)

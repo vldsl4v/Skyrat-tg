@@ -11,6 +11,8 @@
 		panel_open = TRUE
 		pixel_x = (dir & 3)? 0 : (dir == 4 ? -24 : 24)
 		pixel_y = (dir & 3)? (dir ==1 ? -24 : 24) : 0
+	if(name == initial(name))
+		name = "[get_area_name(src)] [initial(name)]"
 
 	RegisterSignal(SSsecurity_level, COMSIG_SECURITY_LEVEL_CHANGED, .proc/check_security_level)
 
@@ -67,6 +69,7 @@
 	SEND_SIGNAL(src, COMSIG_FIREALARM_TRIGGER_DOORS)
 
 /obj/machinery/firealarm/proc/trigger_effects()
+	SIGNAL_HANDLER
 	SEND_SIGNAL(src, COMSIG_FIREALARM_TRIGGERED_ON)
 
 /obj/machinery/firealarm/proc/untrigger_effects()
@@ -103,13 +106,13 @@
 	if(panel_open)
 
 		if(tool.tool_behaviour == TOOL_WELDER && !user.combat_mode)
-			if(obj_integrity < max_integrity)
+			if(atom_integrity < max_integrity)
 				if(!tool.tool_start_check(user, amount=0))
 					return
 
 				to_chat(user, span_notice("You begin repairing [src]..."))
 				if(tool.use_tool(src, user, 40, volume=50))
-					obj_integrity = max_integrity
+					atom_integrity = max_integrity
 					to_chat(user, span_notice("You repair [src]."))
 			else
 				to_chat(user, span_warning("[src] is already in good condition!"))

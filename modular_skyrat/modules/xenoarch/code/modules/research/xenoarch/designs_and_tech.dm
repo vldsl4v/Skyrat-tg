@@ -60,6 +60,34 @@
 	category = list("Equipment")
 	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE | DEPARTMENTAL_FLAG_CARGO
 
+/datum/design/xeno_hh_scanner
+	name = "Xenoarch Handheld Scanner"
+	desc = "A handheld scanner for strange rocks. It tags the depths to the rock."
+	id = "xeno_hh_scanner"
+	build_type = PROTOLATHE | AWAY_LATHE
+	materials = list(/datum/material/iron = 500, /datum/material/plastic = 500)
+	build_path = /obj/item/xenoarch/handheld_scanner
+	category = list("Equipment")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE | DEPARTMENTAL_FLAG_CARGO
+
+/datum/design/xeno_hh_scanner/advanced
+	name = "Xenoarch Advanced Handheld Scanner"
+	id = "xeno_hh_scanner_advanced"
+	materials = list(/datum/material/iron = 500, /datum/material/plastic = 500, /datum/material/diamond = 500)
+	build_path = /obj/item/xenoarch/handheld_scanner/advanced
+	category = list("Equipment")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE | DEPARTMENTAL_FLAG_CARGO
+
+/datum/design/xeno_hh_recoverer
+	name = "Xenoarch Handheld Recoverer"
+	desc = "An item that has the capabilities to recover items lost due to time."
+	id = "xeno_hh_recoverer"
+	build_type = PROTOLATHE | AWAY_LATHE
+	materials = list(/datum/material/iron = 500, /datum/material/plastic = 500)
+	build_path = /obj/item/xenoarch/handheld_recoverer
+	category = list("Equipment")
+	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE | DEPARTMENTAL_FLAG_CARGO
+
 /datum/design/xeno_bag
 	name = "Xenoarch Bag"
 	desc = "A bag that can hold strange rocks."
@@ -118,14 +146,6 @@
 	category = list("Research Machinery")
 	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
 
-/datum/design/board/xeno_digger
-	name = "Machine Design (Xenoarch Digger)"
-	desc = "Allows for the construction of circuit boards used to build a new xenoarch digger."
-	id = "xeno_digger"
-	build_path = /obj/item/circuitboard/machine/xenoarch_digger
-	category = list("Research Machinery")
-	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
-
 /datum/design/board/xeno_scanner
 	name = "Machine Design (Xenoarch Scanner)"
 	desc = "Allows for the construction of circuit boards used to build a new xenoarch scanner."
@@ -157,6 +177,7 @@
 		"hammercm10",
 		"bas_brush",
 		"xeno_tape",
+		"xeno_hh_scanner",
 	)
 
 /datum/techweb_node/xenoarch_storage
@@ -177,7 +198,6 @@
 	prereq_ids = list("basic_xenoarch")
 	design_ids = list(
 		"xeno_researcher",
-		"xeno_digger",
 		"xeno_scanner",
 		"xeno_recoverer",
 	)
@@ -192,5 +212,17 @@
 		"adv_hammer",
 		"adv_brush",
 		"adv_bag",
+		"xeno_hh_scanner_advanced",
+		"xeno_hh_recoverer",
 	)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 3000)
+	required_experiments = list(/datum/experiment/scanning/points/xenoarch)
+
+/datum/experiment/scanning/points/xenoarch
+	name = "Advanced Xenoarchaeology Tools"
+	description = "It is possible to create even more advanced tools for xenoarchaeoloy."
+	required_points = 10
+	required_atoms = list(
+		/obj/item/xenoarch/useless_relic = 1,
+		/obj/item/xenoarch/broken_item = 2,
+	)

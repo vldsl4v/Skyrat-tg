@@ -2,7 +2,7 @@
 /obj/item/gun/ballistic/bow
 	name = "longbow"
 	desc = "While pretty finely crafted, surely you can find something better to use in the current year."
-	icon = 'icons/obj/guns/ballistic.dmi'
+	icon = 'modular_skyrat/modules/fixing_missing_icons/ballistic.dmi' //skyrat edit
 	icon_state = "bow"
 	inhand_icon_state = "bow"
 	load_sound = null
@@ -23,12 +23,10 @@
 
 /obj/item/gun/ballistic/bow/proc/drop_arrow()
 	drawn = FALSE
-	if(!chambered)
-		chambered = magazine.get_round(keep = FALSE)
-		return
-	if(!chambered)
-		return
-	chambered.forceMove(drop_location())
+	if(chambered)
+		chambered.forceMove(drop_location())
+		magazine.get_round(keep = FALSE)
+		chambered = null
 	update_appearance()
 
 /obj/item/gun/ballistic/bow/chamber_round(keep_bullet = FALSE, spin_cylinder, replace_new_round)
@@ -48,7 +46,7 @@
 	if(!chambered)
 		return
 	if(!drawn)
-		to_chat(user, "<span clasas='warning'>Without drawing the bow, the arrow uselessly falls to the ground.</span>")
+		to_chat(user, span_warning("Without drawing the bow, the arrow uselessly falls to the ground."))
 		drop_arrow()
 		update_appearance()
 		return

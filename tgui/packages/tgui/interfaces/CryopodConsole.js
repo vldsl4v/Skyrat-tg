@@ -1,5 +1,5 @@
 import { useBackend } from '../backend';
-import { Button, Box, LabeledList, NoticeBox, Section, Stack } from '../components';
+import { Button, LabeledList, NoticeBox, Section, Stack } from '../components';
 import { Window } from '../layouts';
 
 export const CryopodConsole = (props, context) => {
@@ -7,8 +7,7 @@ export const CryopodConsole = (props, context) => {
   const { account_name } = data;
 
   const welcomeTitle = `Hello, ${account_name || '[REDACTED]'}!`;
-  // Skyrat Edit Addition - Cryostorage stores items.
-  // Original does not contain <ItemList /> or its containing Stack.Item
+
   return (
     <Window title="Cryopod Console" width={400} height={480}>
       <Window.Content>
@@ -29,7 +28,6 @@ export const CryopodConsole = (props, context) => {
       </Window.Content>
     </Window>
   );
-// Skyrat Edit End
 };
 
 const CrewList = (props, context) => {
@@ -55,21 +53,20 @@ const CrewList = (props, context) => {
   );
 };
 
-// Skyrat Edit Addition - Cryostorage stores items.
 const ItemList = (props, context) => {
   const { act, data } = useBackend(context);
-  const { ref_list, ref_name, ref_allw } = data;
-  if (!ref_allw) {
+  const { item_ref_list, item_ref_name, item_retrieval_allowed } = data;
+  if (!item_retrieval_allowed) {
     return (
       <NoticeBox>You are not authorized for item management.</NoticeBox>
     );
   }
   return (
-    ref_list.length && (
+    item_ref_list.length && (
       <Section fill scrollable>
         <LabeledList>
-          {ref_list.map((item) => (
-            <LabeledList.Item key={item} label={ref_name[item]}>
+          {item_ref_list.map((item) => (
+            <LabeledList.Item key={item} label={item_ref_name[item]}>
               <Button
                 icon="exclamation-circle"
                 content="Retrieve"
@@ -84,4 +81,3 @@ const ItemList = (props, context) => {
     )
   );
 };
-// Skyrat Edit End
